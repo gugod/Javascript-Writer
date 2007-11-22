@@ -13,7 +13,7 @@ use JSON::Syck;
 
 __PACKAGE__->mk_accessors qw(statements);
 
-our $VERSION = '0.0.5';
+our $VERSION = '0.0.6';
 
 sub new {
     my $class = shift;
