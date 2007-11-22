@@ -1,5 +1,15 @@
 Revision history for JavaScript-Writer
 
+0.0.2  Tue Aug 28 00:17:13 CST 2007
+- Featured "call chain", let it be joyful like jquery.
+- overload "<<" and stringify as syntatic sugar
+- use AUTOLOAD to call functions like perl
+- Directly use JSON::Syck instead.
+- Add an "object" method that let you call function
+  on objects other then "window"
+- Add a "function" method that let you write function
+  definition with perl sub.
+
 0.0.1  Sun Aug 19 20:59:58 2007
        Initial release.
 
