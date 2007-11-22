@@ -10,7 +10,7 @@ use overload
 
 __PACKAGE__->mk_accessors qw(statements);
 
-our $VERSION = '0.0.2';
+our $VERSION = '0.0.3';
 
 sub new {
     my $class = shift;
@@ -104,10 +104,6 @@ __END__
 =head1 NAME
 
 JavaScript::Writer - JavaScript code generation from Perl.
-
-=head1 VERSION
-
-This document describes JavaScript::Writer version 0.0.1
 
 =head1 SYNOPSIS
 

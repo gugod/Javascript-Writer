@@ -6,8 +6,7 @@ use v5.8.0;
 
 use overload '""' => \&as_string;
 
-our $VERSION = '0.0.1';
-
+our $VERSION = '0.0.2';
 
 use JavaScript::Writer;
 
@@ -39,11 +38,7 @@ __END__
 
 =head1 NAME
 
-JavaScript::Writer - JavaScript code generation from Perl.
-
-=head1 VERSION
-
-This document describes JavaScript::Writer version 0.0.1
+JavaScript::Writer::Function - JavaScript function generation from Perl.
 
 =head1 SYNOPSIS
 
