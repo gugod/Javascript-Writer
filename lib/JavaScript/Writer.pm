@@ -4,6 +4,9 @@ use warnings;
 use strict;
 use v5.8.0;
 use base 'Class::Accessor::Fast';
+use overload
+    '<<' => \&append,
+    '""' => \&as_string;
 
 __PACKAGE__->mk_accessors qw(statements);
 
