@@ -35,8 +35,8 @@ sub call {
 }
 
 sub append {
-    my ($self, $code) = @_;
-    push @{$self->statements}, { code => $code };
+    my ($self, $code, @xs) = @_;
+    push @{$self->statements}, { code => $code, @xs };
     return $self;
 }
 
@@ -79,10 +79,24 @@ sub while {
 }
 
 sub if {
-    my ($self, $condition, $block, @x) = @_;
+    my ($self, $condition, $block) = @_;
     my $b = JavaScript::Writer::Block->new;
     $b->body($block);
-    $self->append("if(${condition})${b}")
+    $self->append("if(${condition})${b}", delimiter => "\n")
+}
+
+sub elsif {
+    my ($self, $condition, $block) = @_;
+    my $b = JavaScript::Writer::Block->new;
+    $b->body($block);
+    $self->append("else if(${condition})${b}", delimiter => "\n");
+}
+
+sub else {
+    my ($self, $block) = @_;
+    my $b = JavaScript::Writer::Block->new;
+    $b->body($block);
+    $self->append("else${b}", delimiter => "\n");
 }
 
 use JavaScript::Writer::Function;
@@ -100,7 +114,8 @@ sub as_string {
 
     for (@{$self->statements}) {
         if (my $f = $_->{call}) {
-            my $delimiter = $_->{end_of_call_chain} ? ";" : ".";
+            my $delimiter = $_->{delimiter} ||
+                ($_->{end_of_call_chain} ? ";" : ".");
             my $args = $_->{args};
             $ret .= ($_->{object} ? "$_->{object}." : "" ) .
                 "$f(" .
@@ -116,7 +131,9 @@ sub as_string {
                      ) . ")" . $delimiter
         }
         elsif (my $c = $_->{code}) {
-            $c .= ";" unless $c =~ /;\s*$/s;
+            my $delimiter = $_->{delimiter} || ";";
+            $c .= $delimiter
+                unless $c =~ /$delimiter\s*$/s;
             $ret .= $c;
         }
     }
@@ -199,9 +216,6 @@ Which will then generated this javascript code snippet:
 
     Widget.Lightbox.show("Nihao")
 
-=item if ( $codnition => $code_ref )
-
-if()
 
 =item while( $condition => $code_ref )
 
@@ -214,6 +228,21 @@ The output of 'while' statement look like this:
     while($condition) {
         $code
     }
+
+=item if ( $codnition => $code_ref )
+
+=item elsif ( $codnition => $code_ref )
+
+=item else ( $code_ref )
+
+These 3 methods forms a trinity to construct the if..elsif..else form
+of control structure. Of course, in JavaScript, it it's not called
+"elsif", but "else if". But hey, we're Perl people.
+
+The arguements are pretty similar to C<while> method. But these
+function use newline characters to deliminate them from others rather
+then using ";".  That's the major difference between them and all
+other methods.
 
 =item function( $code_ref )
 
