@@ -8,6 +8,9 @@ use overload
     '<<' => \&append,
     '""' => \&as_string;
 
+
+use JSON::Syck;
+
 __PACKAGE__->mk_accessors qw(statements);
 
 our $VERSION = '0.0.4';
@@ -43,6 +46,22 @@ sub object {
     return $self;
 }
 
+sub var {
+    my ($self, $var, $value) = @_;
+    my $s = "";
+    if (defined $value) {
+        if (ref($value) eq 'ARRAY'
+                || ref($value) eq 'HASH'
+                || !ref($value) ) {
+            $s = "var $var = " . JSON::Syck::Dump($value) . ";"
+        }
+    }
+    else {
+        $s = "var $var;";
+    }
+    $self->append($s)
+}
+
 use JavaScript::Writer::Function;
 
 sub function {
@@ -51,8 +70,6 @@ sub function {
     $jsf->body($sub);
     return $jsf;
 }
-
-use JSON::Syck;
 
 sub as_string {
     my ($self) = @_;
@@ -142,6 +159,12 @@ Call an javascript function with arguments. Arguments are given in
 perl's native form, you don't need to use L<JSON> module to serialized
 it first.  (Unless, of course, that's your purpose: to get a JSON
 string in JavaScript.)
+
+
+=item var( $name, [ $value ] )
+
+Declare a value named $name with a optional default value $value.
+$value could be an arrayref, hashref, or scalar.
 
 =item object( $object )
 

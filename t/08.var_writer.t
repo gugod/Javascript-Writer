@@ -5,9 +5,17 @@ use warnings;
 use JavaScript::Writer;
 use Test::More;
 
-plan tests => 3;
+plan tests => 4;
 
-# Assignments
+{
+    # var a;
+    my $js = JavaScript::Writer->new();
+
+    $js->var('a');
+
+    is $js, "var a;", "variable declarition";
+}
+
 {
     # var a = 1;
     my $js = JavaScript::Writer->new();
@@ -29,8 +37,6 @@ plan tests => 3;
 {
     # var a = { ... }
     my $js = JavaScript::Writer->new();
-
     $js->var(a => { Lorem => 'Ipsum', 'Foo' => 0 });
-
-    is $js, 'var a = {"Lorem":"Ipsum","Foo":"0"};', "Hash assignment";
+    is $js, 'var a = {"Foo":0,"Lorem":"Ipsum"};', "Hash assignment";
 }
