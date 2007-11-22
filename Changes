@@ -1,5 +1,8 @@
 Revision history for JavaScript-Writer
 
+0.0.5
+- Add a var declartion writer.
+
 0.0.4
 - Add function name and arguments to function writer.
 

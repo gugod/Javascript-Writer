@@ -55,6 +55,12 @@ sub var {
                 || !ref($value) ) {
             $s = "var $var = " . JSON::Syck::Dump($value) . ";"
         }
+        elsif (ref($value) eq 'CODE') {
+            $s = "var $var = " . $self->function($value);
+        }
+        elsif (ref($value) =~ '^JavaScript::Writer') {
+            $s = "var $var = " . $value->as_string();
+        }
     }
     else {
         $s = "var $var;";
