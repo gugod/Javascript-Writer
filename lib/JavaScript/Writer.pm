@@ -43,16 +43,13 @@ sub object {
     return $self;
 }
 
-# A "function" writer.
+use JavaScript::Writer::Function;
+
 sub function {
-    my $self = shift;
-    my $sub = shift;
-    my $function_body = sub {
-        my $js = shift;
-        $sub->($js);
-        return $js->as_string;
-    }->(JavaScript::Writer->new);
-    return "function(){${function_body}}";
+    my ($self, $sub) = @_;
+    my $jsf = JavaScript::Writer::Function->new;
+    $jsf->body($sub);
+    return $jsf;
 }
 
 use JSON::Syck;

@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use v5.8.0;
 
+use overload '""' => \&as_string;
+
 use JavaScript::Writer;
 
 sub new {
@@ -24,7 +26,7 @@ sub as_string {
     my $function_body = sub {
         my $js = shift;
         $sub->($js);
-        return $js->as_string;
+        return $js;
     }->(JavaScript::Writer->new);
     return "function(){${function_body}}";
 }
