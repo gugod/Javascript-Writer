@@ -52,13 +52,11 @@ __END__
 
 =head1 NAME
 
-JavaScript::Writer - [One line description of module's purpose here]
-
+JavaScript::Writer - JavaScript code generation from Perl.
 
 =head1 VERSION
 
 This document describes JavaScript::Writer version 0.0.1
-
 
 =head1 SYNOPSIS
 
@@ -74,7 +72,12 @@ This document describes JavaScript::Writer version 0.0.1
 
 =head1 DESCRIPTION
 
-As you can see, this module is trying to simulate what RJS does.
+As you can see, this module is trying to simulate what RJS does. It's
+meant to be used in some web app framework, or for those who are
+generate javascript code from perl data.
+
+It requires you loaded several javascript librarys in advance, then
+use its C<call> method to call a certain functions from your library.
 
 =head1 INTERFACE
 
@@ -91,28 +94,17 @@ perl's native form, you don't need to use L<JSON> module to serialized
 it first.  (Unless, of course, that's your purpose: to get a JSON
 string in JavaScript.)
 
-=item to_string()
+=item append( $statement )
+
+Manually append a statement. With this function, you need to properly
+serialize everything to JSON. Make sure you now that what you're
+doing.
+
+=item as_string()
 
 Output your statements as a snippet of javascript code.
 
 =back
-
-=head1 DIAGNOSTICS
-
-=over
-
-=item C<< Error message here, perhaps with %s placeholders >>
-
-[Description of error here]
-
-=item C<< Another error message here >>
-
-[Description of error here]
-
-[Et cetera, et cetera]
-
-=back
-
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
@@ -120,7 +112,7 @@ JavaScript::Writer requires no configuration files or environment variables.
 
 =head1 DEPENDENCIES
 
-None.
+L<Class::Accessor::Fast>, L<UNIVERSAL::to_json>
 
 =head1 INCOMPATIBILITIES
 

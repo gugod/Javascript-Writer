@@ -4,8 +4,9 @@ use inc::Module::Install;
 
 all_from 'lib/JavaScript/Writer.pm';
 
-build_requires  'Test::More'        => '0.42';
+build_requires 'Test::More' => '0.42';
+
+requires 'UNIVERSAL::to_json' => '0', 'Class::Accessor::Fast' => '0';
 
 WriteAll;
-
 
