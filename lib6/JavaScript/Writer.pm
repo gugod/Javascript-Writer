@@ -33,7 +33,7 @@ class JavaScript::Writer-0.0.1 {
                 $ret ~= %s{'call'} ~ "(\"$args\");";
             }
             elsif (%s{'code'}) {
-                $ret ~= "%s{code};"
+                $ret ~= %s{'code'} ~ ";"
             }
         }
         return $ret;
