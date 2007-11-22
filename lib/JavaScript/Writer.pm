@@ -10,7 +10,7 @@ use overload
 
 __PACKAGE__->mk_accessors qw(statements);
 
-our $VERSION = '0.0.3';
+our $VERSION = '0.0.4';
 
 sub new {
     my $class = shift;
