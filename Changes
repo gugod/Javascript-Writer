@@ -1,5 +1,10 @@
 Revision history for JavaScript-Writer
 
+0.0.7
+- Add if...elsif...else
+- As an experiment, write a basic Perl6 version under lib6, corresponding
+  tests are under t6/. It require pugs to run them. Try run-t6.sh.
+
 0.0.6
 - Add a 'while' writter.
 
