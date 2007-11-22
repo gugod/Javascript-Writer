@@ -193,6 +193,18 @@ Which will then generated this javascript code snippet:
 
     Widget.Lightbox.show("Nihao")
 
+=item while( $condition => $code_ref )
+
+C<$condition> is a string (yes, just a string for now) of javascript
+code, and a $code_ref is used to generate the block required for this
+while block.
+
+The output of 'while' statement look like this:
+
+    while($condition) {
+        $code
+    }
+
 =item function( $code_ref )
 
 This is a javascript function writer. It'll output something like this:
