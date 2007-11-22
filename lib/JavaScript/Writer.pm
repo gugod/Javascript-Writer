@@ -46,6 +46,7 @@ sub object {
     return $self;
 }
 
+
 sub var {
     my ($self, $var, $value) = @_;
     my $s = "";
@@ -68,15 +69,20 @@ sub var {
     $self->append($s)
 }
 
+use JavaScript::Writer::Block;
+
 sub while {
     my ($self, $condition, $block) = @_;
-    my $body = sub {
-        my $js = shift;
-        $block->($js);
-        return $js;
-    }->(JavaScript::Writer->new);
+    my $b = JavaScript::Writer::Block->new;
+    $b->body($block);
+    $self->append("while(${condition})${b}")
+}
 
-    $self->append("while(${condition}){${body}}")
+sub if {
+    my ($self, $condition, $block, @x) = @_;
+    my $b = JavaScript::Writer::Block->new;
+    $b->body($block);
+    $self->append("if(${condition})${b}")
 }
 
 use JavaScript::Writer::Function;
@@ -192,6 +198,10 @@ Give the object name for next function call. The preferred usage is:
 Which will then generated this javascript code snippet:
 
     Widget.Lightbox.show("Nihao")
+
+=item if ( $codnition => $code_ref )
+
+if()
 
 =item while( $condition => $code_ref )
 

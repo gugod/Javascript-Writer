@@ -1,19 +1,17 @@
-package JavaScript::Writer::Function;
+package JavaScript::Writer::Block;
 
 use strict;
 use warnings;
 use v5.8.0;
 use base 'Class::Accessor::Fast';
 
-__PACKAGE__->mk_accessors(qw[ name body ]);
+__PACKAGE__->mk_accessors(qw[ body ]);
 
 use overload '""' => \&as_string;
 
-
-our $VERSION = '0.0.2';
+our $VERSION = '0.0.1';
 
 use JavaScript::Writer;
-use JavaScript::Writer::Block;
 
 sub new {
     my $class = shift;
@@ -21,37 +19,28 @@ sub new {
     return $self;
 }
 
-sub arguments {
-    my ($self, @args) = @_;
-    if (@args) {
-        $self->{arguments} = \@args;
-        return $self;
-    }
-    return @{$self->{arguments}||[]}
-}
-
 sub as_string {
     my $self = shift;
     my $sub = $self->body;
-    my $function_body = JavaScript::Writer::Block->new;
-    $function_body->body($self->body);
-    my $name = $self->name ? " $self->{name}" : "";
-    my $args = join(",", $self->arguments);
-    return "function${name}($args)${function_body}";
+    my $body = sub {
+        my $js = shift;
+        $sub->($js);
+        return $js;
+    }->(JavaScript::Writer->new);
+    return "{${body}}";
 }
 
 1;
+
 __END__
 
 =head1 NAME
 
-JavaScript::Writer::Function - JavaScript function definition generation from Perl.
+JavaScript::Writer::Block - JavaScript code block generation from Perl.
 
 =head1 SYNOPSIS
 
-    my $js = JavaScript::Writer::Function->new();
-
-    $js->name("salut");
+    my $js = JavaScript::Writer::Block->new();
 
     $js->body(sub {
         my $js = shift;
@@ -60,13 +49,18 @@ JavaScript::Writer::Function - JavaScript function definition generation from Pe
 
     print $js->as_string;
 
-    # function salut(){alert("Foo");}
+    # {alert("Foo");}
 
 =head1 DESCRIPTION
 
-This module is designed to be the object that outputs a function
-declarition. The object overload the stringify operation to call its
-as_string() method as its basic syntatic sugar.
+This module is designed to be the object that outputs a block of
+javascript code. A block in javascript is a region wrapped by C<{}>.
+This module is used internally in various places. For example, to
+generate function body, or to generate the code block for "if" and
+"while" control structure.
+
+The object overload the stringify operation to call its as_string()
+method as its basic syntatic sugar.
 
 =head1 INTERFACE
 
@@ -76,26 +70,16 @@ as_string() method as its basic syntatic sugar.
 
 Constructor. Accepts nothing and gives you an object.
 
-=item name($str)
-
-Specify the function name.
-
-=item arguments( $arg1, $arg2, ... )
-
-Spicify the arguments of current function definition. Each argument is
-a string of variable name in javascript.
-
 =item body( $code_ref )
 
 The passed $code_ref is a callback to generate the function
 body. It'll be passed in a JavaScript::Writer object so you can use it
-to write more javascript statements. This function is the one that
-generates the function body when you call
-C<JavaScript::Writer::function()>
+to write more javascript statements.
 
 =item as_string
 
-Output current function definition as a string.
+Output current block of javascript code as a string. This string
+will always be wrapped inside a pair of C<{}>.
 
 =back
 
