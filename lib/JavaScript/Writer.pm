@@ -43,6 +43,18 @@ sub object {
     return $self;
 }
 
+# A "function" writer.
+sub function {
+    my $self = shift;
+    my $sub = shift;
+    my $function_body = sub {
+        my $js = shift;
+        $sub->($js);
+        return $js->as_string;
+    }->(JavaScript::Writer->new);
+    return "function(){${function_body}}";
+}
+
 use JSON::Syck;
 
 sub as_string {
@@ -137,6 +149,27 @@ Give the object name for next function call. The preferred usage is:
 Which will then generated this javascript code snippet:
 
     Widget.Lightbox.show("Nihao")
+
+=item function( $code_ref )
+
+This is a javascript function writer. It'll output something like this:
+
+    function(){...}
+
+The passed $code_ref is a callback to generate the function
+body. It'll be passed in a JavaScript::Writer object so you can use it
+to write more javascript statements. Here defines a function that
+simply slauts to you.
+
+    my $js = JavaScript::Writer->new;
+    my $f = $js->function(sub {
+        my $js = shift;
+        $js->alert("Nihao")
+    })
+
+The returned $f is this string:
+
+    function(){alert("Nihao")}
 
 =item append( $statement )
 
