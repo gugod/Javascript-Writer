@@ -8,8 +8,13 @@ use Test::More;
 
 plan tests => 1;
 
-my $js = JavaScript::Writer->new();
+{
+    # For "<<"
+    no warnings;
 
-$js << q{alert('foo')};
+    my $js = JavaScript::Writer->new();
 
-is($js, q{alert('foo');});
+    $js << q{alert('foo')};
+
+    is($js, q{alert('foo');});
+}

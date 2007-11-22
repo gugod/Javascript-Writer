@@ -21,17 +21,17 @@ sub new {
 
 sub call {
     my ($self, $function, @args) = @_;
-    push @{$self->statements},{ call => $function, args => \@args }
+    push @{$self->statements},{ call => $function, args => \@args };
+    return $self;
 }
 
 sub append {
     my ($self, $code) = @_;
-    push @{$self->statements}, {
-        code => $code
-    }
+    push @{$self->statements}, { code => $code };
+    return $self;
 }
 
-use UNIVERSAL::to_json;
+use JSON::Syck;
 
 sub as_string {
     require YAML;
@@ -40,7 +40,7 @@ sub as_string {
     for (@{$self->statements}) {
         if (my $f = $_->{call}) {
             my $args = $_->{args};
-            $ret .= "$f(" . join(",", map { $_->to_json } @$args ) . ");";
+            $ret .= "$f(" . join(",", map { JSON::Syck::Dump $_ } @$args ) . ");";
         }
         elsif (my $c = $_->{code}) {
             $c .= ";" unless $c =~ /;\s*$/s;
@@ -48,6 +48,17 @@ sub as_string {
         }
     }
     return $ret;
+}
+
+our $AUTOLOAD;
+sub AUTOLOAD {
+    my $self = shift;
+
+    my $function = $AUTOLOAD;
+    $function =~ s/.*:://;
+
+    $self->call($function, @_);
+    return $self;
 }
 
 1; # Magic true value required at end of module
@@ -70,8 +81,10 @@ This document describes JavaScript::Writer version 0.0.1
     # Call alert("Nihao")
     $js->call("alert", "Nihao");
 
-    # Similar, but display localized message of "Nihao". (that might be "哈囉")
+    # Similar, but display Perl-localized message of "Nihao". (that might be "哈囉")
     $js->call("alert", _("Nihao") );
+
+    # Overload
 
 =head1 DESCRIPTION
 
