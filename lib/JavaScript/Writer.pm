@@ -70,8 +70,13 @@ sub var {
 
 sub while {
     my ($self, $condition, $block) = @_;
-    my $body = $block->(JavaScript::Writer->new) || "";
-    $self->append("while(${condition}){$body}")
+    my $body = sub {
+        my $js = shift;
+        $block->($js);
+        return $js;
+    }->(JavaScript::Writer->new);
+
+    $self->append("while(${condition}){${body}}")
 }
 
 use JavaScript::Writer::Function;
