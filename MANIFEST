@@ -24,6 +24,7 @@ t/04.tie.t
 t/05.object.t
 t/06.call_chain.t
 t/07.function_writer.t
+t/08.var_writer.t
 t/100.jquery.t
 t/50.function.t
 t/perlcritic.t
