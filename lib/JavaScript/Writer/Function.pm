@@ -6,6 +6,9 @@ use v5.8.0;
 
 use overload '""' => \&as_string;
 
+our $VERSION = '0.0.1';
+
+
 use JavaScript::Writer;
 
 sub new {
@@ -54,7 +57,32 @@ This document describes JavaScript::Writer version 0.0.1
 
 =head1 DESCRIPTION
 
+This module is designed to be the object that outputs a function
+declarition. The object overload the stringify operation to call its
+as_string() method as its basic syntatic sugar.
+
 =head1 INTERFACE
+
+=over
+
+=item new()
+
+Constructor. Accepts nothing and gives you an object.
+
+=item body( $code_ref )
+
+The passed $code_ref is a callback to generate the function
+body. It'll be passed in a JavaScript::Writer object so you can use it
+to write more javascript statements. This function is the one that
+generates the function body when you call
+C<JavaScript::Writer::function()>
+
+=item as_string
+
+Output current function definition as a string.
+
+=back
+
 
 =head1 INCOMPATIBILITIES
 
