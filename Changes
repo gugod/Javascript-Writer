@@ -1,7 +1,8 @@
 Revision history for JavaScript-Writer
 
 0.0.5
-- Add a var declartion writer.
+- Add a var declartion writer, which supports simple values (scalar,
+  array, hash), as well as function assignments.
 
 0.0.4
 - Add function name and arguments to function writer.
