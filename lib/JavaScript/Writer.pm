@@ -21,13 +21,24 @@ sub new {
 
 sub call {
     my ($self, $function, @args) = @_;
-    push @{$self->statements},{ call => $function, args => \@args };
+    push @{$self->statements},{
+        object => $self->{object} || undef,
+        call => $function,
+        args => \@args
+    };
+    delete $self->{object};
     return $self;
 }
 
 sub append {
     my ($self, $code) = @_;
     push @{$self->statements}, { code => $code };
+    return $self;
+}
+
+sub object {
+    my ($self, $object) = @_;
+    $self->{object} = $object;
     return $self;
 }
 
@@ -40,7 +51,9 @@ sub as_string {
     for (@{$self->statements}) {
         if (my $f = $_->{call}) {
             my $args = $_->{args};
-            $ret .= "$f(" . join(",", map { JSON::Syck::Dump $_ } @$args ) . ");";
+            $ret .= ($_->{object} ? "$_->{object}." : "" ) .
+                "$f(" . join(",", map { JSON::Syck::Dump $_ } @$args ) . ");";
+
         }
         elsif (my $c = $_->{code}) {
             $c .= ";" unless $c =~ /;\s*$/s;
@@ -59,6 +72,12 @@ sub AUTOLOAD {
 
     $self->call($function, @_);
     return $self;
+}
+
+
+sub FETCH {
+    my ($self, $obj) = @_;
+    $self->{object} = $obj;
 }
 
 1; # Magic true value required at end of module
@@ -109,6 +128,16 @@ Call an javascript function with arguments. Arguments are given in
 perl's native form, you don't need to use L<JSON> module to serialized
 it first.  (Unless, of course, that's your purpose: to get a JSON
 string in JavaScript.)
+
+=item object( $object )
+
+Give the object name for next function call. The preferred usage is:
+
+    $js->object("Widget.Lightbox")->show("Nihao")
+
+Which will then generated this javascript code snippet:
+
+    Widget.Lightbox.show("Nihao")
 
 =item append( $statement )
 
