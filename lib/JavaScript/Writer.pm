@@ -3,28 +3,24 @@ package JavaScript::Writer;
 use warnings;
 use strict;
 use v5.8.0;
-use base 'Class::Accessor::Fast';
 use overload
     '<<' => \&append,
     '""' => \&as_string;
 
-
 use JSON::Syck;
-
-__PACKAGE__->mk_accessors qw(statements);
 
 our $VERSION = '0.0.7';
 
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
-    $self->statements([]);
+    $self->{statements} = [];
     return $self;
 }
 
 sub call {
     my ($self, $function, @args) = @_;
-    push @{$self->statements},{
+    push @{$self->{statements}},{
         object => $self->{object} || undef,
         call => $function,
         args => \@args,
@@ -36,7 +32,7 @@ sub call {
 
 sub append {
     my ($self, $code, @xs) = @_;
-    push @{$self->statements}, { code => $code, @xs };
+    push @{$self->{statements}}, { code => $code, @xs };
     return $self;
 }
 
@@ -45,7 +41,6 @@ sub object {
     $self->{object} = $object;
     return $self;
 }
-
 
 sub var {
     my ($self, $var, $value) = @_;
@@ -112,7 +107,7 @@ sub as_string {
     my ($self) = @_;
     my $ret = "";
 
-    for (@{$self->statements}) {
+    for (@{$self->{statements}}) {
         if (my $f = $_->{call}) {
             my $delimiter = $_->{delimiter} ||
                 ($_->{end_of_call_chain} ? ";" : ".");
