@@ -11,12 +11,21 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/JavaScript/Writer.pm
+lib/JavaScript/Writer/Function.pm
 Makefile.PL
 MANIFEST
 META.yml			# Will be created by "make dist"
 README
 t/00.load.t
 t/01.simple.t
+t/02.overload.t
+t/03.autoload.t
+t/04.tie.t
+t/05.object.t
+t/06.call_chain.t
+t/07.function_writer.t
+t/100.jquery.t
+t/50.function.t
 t/perlcritic.t
 t/pod-coverage.t
 t/pod.t
