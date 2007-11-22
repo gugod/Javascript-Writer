@@ -11,7 +11,7 @@ plan tests => 1;
     # while(1){}
     my $js = JavaScript::Writer->new();
 
-    $js->while(1 => sub {})
+    $js->while(1 => sub {});
 
-    is $js, "while(1){}", "an empty while loop";
+    is $js, "while(1){};", "an empty while loop";
 }

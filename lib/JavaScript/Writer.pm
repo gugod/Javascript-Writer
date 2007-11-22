@@ -68,6 +68,12 @@ sub var {
     $self->append($s)
 }
 
+sub while {
+    my ($self, $condition, $block) = @_;
+    my $body = $block->(JavaScript::Writer->new) || "";
+    $self->append("while(${condition}){$body}")
+}
+
 use JavaScript::Writer::Function;
 
 sub function {
