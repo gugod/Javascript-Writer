@@ -45,7 +45,6 @@ sub object {
 use JSON::Syck;
 
 sub as_string {
-    require YAML;
     my ($self) = @_;
     my $ret = "";
     for (@{$self->statements}) {
