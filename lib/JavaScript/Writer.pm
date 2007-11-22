@@ -174,7 +174,8 @@ simply slauts to you.
         $js->alert("Nihao")
     })
 
-The returned $f is this string:
+The returned $f is a L<JavaScript::Writer::Function> object that
+stringify to this string:
 
     function(){alert("Nihao")}
 
@@ -196,7 +197,7 @@ JavaScript::Writer requires no configuration files or environment variables.
 
 =head1 DEPENDENCIES
 
-L<Class::Accessor::Fast>, L<UNIVERSAL::to_json>
+L<Class::Accessor::Fast>
 
 =head1 INCOMPATIBILITIES
 
