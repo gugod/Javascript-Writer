@@ -66,7 +66,17 @@ sub as_string {
             my $delimiter = $_->{end_of_call_chain} ? ";" : ".";
             my $args = $_->{args};
             $ret .= ($_->{object} ? "$_->{object}." : "" ) .
-                "$f(" . join(",", map { JSON::Syck::Dump $_ } @$args ) . ")" . $delimiter
+                "$f(" .
+                    join(",",
+                         map {
+                             if (ref($_) eq 'CODE') {
+                                 $self->function($_)
+                             }
+                             else {
+                                 JSON::Syck::Dump $_
+                             }
+                         } @$args
+                     ) . ")" . $delimiter
         }
         elsif (my $c = $_->{code}) {
             $c .= ";" unless $c =~ /;\s*$/s;
