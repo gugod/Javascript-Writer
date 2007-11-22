@@ -24,7 +24,8 @@ sub call {
     push @{$self->statements},{
         object => $self->{object} || undef,
         call => $function,
-        args => \@args
+        args => \@args,
+        end_of_call_chain => (!defined wantarray)
     };
     delete $self->{object};
     return $self;
@@ -47,12 +48,13 @@ use JSON::Syck;
 sub as_string {
     my ($self) = @_;
     my $ret = "";
+
     for (@{$self->statements}) {
         if (my $f = $_->{call}) {
+            my $delimiter = $_->{end_of_call_chain} ? ";" : ".";
             my $args = $_->{args};
             $ret .= ($_->{object} ? "$_->{object}." : "" ) .
-                "$f(" . join(",", map { JSON::Syck::Dump $_ } @$args ) . ");";
-
+                "$f(" . join(",", map { JSON::Syck::Dump $_ } @$args ) . ")" . $delimiter
         }
         elsif (my $c = $_->{code}) {
             $c .= ";" unless $c =~ /;\s*$/s;
@@ -65,12 +67,10 @@ sub as_string {
 our $AUTOLOAD;
 sub AUTOLOAD {
     my $self = shift;
-
     my $function = $AUTOLOAD;
     $function =~ s/.*:://;
 
-    $self->call($function, @_);
-    return $self;
+    return $self->call($function, @_);
 }
 
 
