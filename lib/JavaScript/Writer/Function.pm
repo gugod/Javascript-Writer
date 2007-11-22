@@ -3,8 +3,12 @@ package JavaScript::Writer::Function;
 use strict;
 use warnings;
 use v5.8.0;
+use base 'Class::Accessor::Fast';
+
+__PACKAGE__->mk_accessors(qw[ name body ]);
 
 use overload '""' => \&as_string;
+
 
 our $VERSION = '0.0.2';
 
@@ -16,21 +20,26 @@ sub new {
     return $self;
 }
 
-sub body {
-    my ($self, $sub) = @_;
-    $self->{sub} = $sub;
-    return $self;
+sub arguments {
+    my ($self, @args) = @_;
+    if (@args) {
+        $self->{arguments} = \@args;
+        return $self;
+    }
+    return @{$self->{arguments}||[]}
 }
 
 sub as_string {
     my $self = shift;
-    my $sub = $self->{sub};
+    my $sub = $self->body;
     my $function_body = sub {
         my $js = shift;
         $sub->($js);
         return $js;
     }->(JavaScript::Writer->new);
-    return "function(){${function_body}}";
+    my $name = $self->name ? " $self->{name}" : "";
+    my $args = join(",", $self->arguments);
+    return "function${name}($args){${function_body}}";
 }
 
 1;
@@ -38,17 +47,22 @@ __END__
 
 =head1 NAME
 
-JavaScript::Writer::Function - JavaScript function generation from Perl.
+JavaScript::Writer::Function - JavaScript function definition generation from Perl.
 
 =head1 SYNOPSIS
 
     my $js = JavaScript::Writer::Function->new();
+
+    $js->name("salut");
+
     $js->body(sub {
         my $js = shift;
-        $js->alert("Foo");
+        $js->alert("Nihao");
     })
-    print $js->as_string
-    # function(){alert("Foo");}
+
+    print $js->as_string;
+
+    # function salut(){alert("Foo");}
 
 =head1 DESCRIPTION
 
@@ -63,6 +77,15 @@ as_string() method as its basic syntatic sugar.
 =item new()
 
 Constructor. Accepts nothing and gives you an object.
+
+=item name($str)
+
+Specify the function name.
+
+=item arguments( $arg1, $arg2, ... )
+
+Spicify the arguments of current function definition. Each argument is
+a string of variable name in javascript.
 
 =item body( $code_ref )
 
