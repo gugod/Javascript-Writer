@@ -135,6 +135,11 @@ sub as_string {
     return $ret;
 }
 
+sub as_html {
+    my $self = shift;
+    qq{<script type="text/javascript">$self</script>}
+}
+
 our $AUTOLOAD;
 sub AUTOLOAD {
     my $self = shift;
@@ -270,6 +275,10 @@ doing.
 =item as_string()
 
 Output your statements as a snippet of javascript code.
+
+=item as_html()
+
+Output your javascript statements as a snippet with a <script> tag.
 
 =back
 
