@@ -41,6 +41,7 @@ t/11.closure.t
 t/12.var.t
 t/50.function.t
 t/51.control.t
+t/lib/Test/JavaScript/Writer/Var.pm
 t/perlcritic.t
 t/pod-coverage.t
 t/pod.t
