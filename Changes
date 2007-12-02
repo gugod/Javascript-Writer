@@ -1,5 +1,11 @@
 Revision history for JavaScript-Writer
 
+0.0.8
+- Add as_html() method
+- Let new() be an instance method too.
+- Extends the use of "var" method so it can tie a javascript variable with a
+  perl variable.
+
 0.0.7
 - Add if...elsif...else
 - As an experiment, write a basic Perl6 version under lib6, corresponding

@@ -9,7 +9,7 @@ use overload
 
 use JSON::Syck;
 
-our $VERSION = '0.0.7';
+our $VERSION = '0.0.8';
 
 sub new {
     my $class = shift;

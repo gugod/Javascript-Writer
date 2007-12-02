@@ -1,6 +1,6 @@
 steps = FindVersion, ChangeVersion, CheckChangeLog, DistTest, Commit, Tag, MakeDist, UploadCPAN
 
-svk.tagpattern = //mirror/handlino/tags/JavaScript-Writer-%v
+svk.tagpattern = //mirror/handlino-pub/perl5/tags/JavaScript-Writer-%v
 
 CheckChangeLog.files = Changes
 

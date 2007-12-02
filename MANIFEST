@@ -1,6 +1,9 @@
 .cvsignore
 .shipit
 Changes
+doc/RFC
+doc/slides/takahashi.css
+doc/slides/takahashi.xul
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -11,12 +14,15 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/JavaScript/Writer.pm
+lib/JavaScript/Writer/BasicHelpers.pm
 lib/JavaScript/Writer/Block.pm
 lib/JavaScript/Writer/Function.pm
+lib/JavaScript/Writer/JQueryHelper.pm
+lib/JavaScript/Writer/Var.pm
 lib6/JavaScript/Writer.pm
 Makefile.PL
-MANIFEST
-META.yml			# Will be created by "make dist"
+MANIFEST			This list of files
+META.yml
 README
 run-t6.sh
 t/00.load.t
@@ -29,7 +35,10 @@ t/06.call_chain.t
 t/07.function_writer.t
 t/08.var_writer.t
 t/09.while.t
+t/10.helper.t
 t/100.jquery.t
+t/11.closure.t
+t/12.var.t
 t/50.function.t
 t/51.control.t
 t/perlcritic.t
