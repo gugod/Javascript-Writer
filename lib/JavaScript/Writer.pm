@@ -65,7 +65,7 @@ sub var {
         elsif (ref($value) eq 'CODE') {
             $s = "var $var = " . $self->function($value);
         }
-        elsif (ref($value) =~ '^JavaScript::Writer') {
+        elsif (ref($value) =~ /^JavaScript::Writer/) {
             $s = "var $var = " . $value->as_string();
         }
     }
@@ -73,15 +73,7 @@ sub var {
         $s = "var $var;";
     }
     $self->append($s);
-
     if (ref $value eq 'SCALAR') {
-        my $v = JavaScript::Writer::Var->new(
-            $value,
-            {
-                name => $var,
-                jsw  => $self
-            }
-        );
         if (defined $$value) {
             my $s = "var $var = " . JSON::Syck::Dump($$value) . ";";
             $self->append($s);
@@ -90,8 +82,21 @@ sub var {
             my $s = "var $var;";
             $self->append($s);
         }
+
+        my $v = JavaScript::Writer::Var->new(
+            $value,
+            {
+                name => $var,
+                jsw  => $self
+            }
+        );
         return $v;
     }
+    elsif (ref $value eq 'REF') {
+        my $s = $self->new->var($var => $$value)->end->as_string;
+        $self->append($s);
+    }
+    return $self;
 }
 
 use JavaScript::Writer::Block;

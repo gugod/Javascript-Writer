@@ -5,7 +5,8 @@ use warnings;
 use JavaScript::Writer;
 use Test::More;
 
-plan tests => 6;
+plan tests => 7;
+
 
 {
     my $js = JavaScript::Writer->new();
@@ -68,4 +69,19 @@ SKIP: {
     $a = $js->new->somefunc("/foo/bar")->end;
 
     is $js, 'var a;a = somefunc("/foo/bar");';
+}
+
+
+{
+    my $js = JavaScript::Writer->new();
+
+    my $a = $js->new->function(
+        sub {
+            my $js = shift;
+            $js->foobar();
+        }
+    );
+    $js->var(a => \$a);
+
+    is $js, 'var a = function(){foobar();};', "another way to assign a function to a variable.";
 }
