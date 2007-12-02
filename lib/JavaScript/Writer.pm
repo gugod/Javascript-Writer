@@ -58,44 +58,39 @@ use JavaScript::Writer::Var;
 sub var {
     my ($self, $var, $value) = @_;
     my $s = "";
-    if (defined $value) {
-        if (ref($value) eq 'ARRAY' || ref($value) eq 'HASH' || !ref($value) ) {
-            $s = "var $var = " . JSON::Syck::Dump($value) . ";"
-        }
-        elsif (ref($value) eq 'CODE') {
-            $s = "var $var = " . $self->function($value);
-        }
-        elsif (ref($value) =~ /^JavaScript::Writer/) {
-            $s = "var $var = " . $value->as_string();
-        }
-    }
-    else {
+
+    if (!defined $value) {
         $s = "var $var;";
     }
-    $self->append($s);
-    if (ref $value eq 'SCALAR') {
+    elsif (ref($value) eq 'ARRAY' || ref($value) eq 'HASH' || !ref($value) ) {
+        $s = "var $var = " . JSON::Syck::Dump($value) . ";"
+    }
+    elsif (ref($value) eq 'CODE') {
+        $s = "var $var = " . $self->function($value);
+    }
+    elsif (ref($value) =~ /^JavaScript::Writer/) {
+        $s = "var $var = " . $value->as_string();
+    }
+    elsif (ref($value) eq 'REF') {
+        $s = $self->new->var($var => $$value)->end->as_string;
+    }
+    elsif (ref($value) eq 'SCALAR') {
         if (defined $$value) {
-            my $s = "var $var = " . JSON::Syck::Dump($$value) . ";";
-            $self->append($s);
+            $s = "var $var = " . JSON::Syck::Dump($$value) . ";";
         }
         else {
-            my $s = "var $var;";
-            $self->append($s);
+            $s = "var $var;";
         }
-
-        my $v = JavaScript::Writer::Var->new(
+        JavaScript::Writer::Var->new(
             $value,
             {
                 name => $var,
                 jsw  => $self
             }
         );
-        return $v;
     }
-    elsif (ref $value eq 'REF') {
-        my $s = $self->new->var($var => $$value)->end->as_string;
-        $self->append($s);
-    }
+
+    $self->append($s);
     return $self;
 }
 
