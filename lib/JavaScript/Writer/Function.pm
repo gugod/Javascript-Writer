@@ -2,7 +2,7 @@ package JavaScript::Writer::Function;
 
 use strict;
 use warnings;
-use v5.8.0;
+use 5.008;
 use base 'Class::Accessor::Fast';
 
 __PACKAGE__->mk_accessors(qw[ name body ]);

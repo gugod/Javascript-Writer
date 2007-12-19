@@ -2,7 +2,7 @@ package JavaScript::Writer;
 
 use warnings;
 use strict;
-use v5.8.0;
+use 5.008;
 use overload
     '<<' => \&append,
     '""' => \&as_string;
