@@ -6,7 +6,7 @@ use warnings;
 use JavaScript::Writer;
 use Test::More;
 
-plan tests => 3;
+plan tests => 5;
 
 {
     js("3s")->latter(
@@ -32,3 +32,13 @@ plan tests => 3;
 
     is js->as_string, "alert(43);"
 };
+
+{
+    js->new->let(a => "foo", b => 3);
+    is js->as_string, q{var a = "foo";var b = 3;};
+}
+
+{
+    js->new->let(a => sub { $_[0]->alert(42); });
+    is js->as_string, q{var a = function(){alert(42);};};
+}
