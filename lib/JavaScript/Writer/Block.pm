@@ -11,7 +11,7 @@ use overload '""' => \&as_string;
 
 our $VERSION = '0.0.1';
 
-use JavaScript::Writer::Base;
+use JavaScript::Writer;
 
 sub new {
     my $class = shift;
@@ -26,7 +26,7 @@ sub as_string {
         my $js = shift;
         $sub->($js);
         return $js;
-    }->(JavaScript::Writer::Base->new);
+    }->(JavaScript::Writer->new);
     return "{${body}}";
 }
 

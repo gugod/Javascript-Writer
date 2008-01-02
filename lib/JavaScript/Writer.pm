@@ -7,6 +7,8 @@ use overload
     '<<' => \&append,
     '""' => \&as_string;
 
+use self;
+
 use JSON::Syck;
 
 our $VERSION = '0.0.8';
@@ -18,27 +20,27 @@ use Sub::Exporter -setup => {
     }
 };
 
-require JavaScript::Writer::Base;
+my $base;
 
-{
-    my $base;
-
-    sub js {
-        my ($target) = @_;
-        $base = JavaScript::Writer::Base->new( target => $target ) unless defined $base;
-        return $base;
-    }
+sub js {
+    my ($target) = @_;
+    $base = JavaScript::Writer->new( target => $target ) unless defined $base;
+    return $base;
 }
 
 sub new {
-    my $class = shift;
-    if (ref $class) {
+    if (ref(self)) {
+        if (defined $base) {
+            self->{statements} = [];
+            return self;
+        }
         return __PACKAGE__->new;
     }
-    my $self = bless {}, $class;
+    my $self = bless { args }, self;
     $self->{statements} = [];
     return $self;
 }
+
 
 sub call {
     my ($self, $function, @args) = @_;
@@ -71,8 +73,34 @@ sub object {
     return $self;
 }
 
+sub latter {
+    my ($cb) = args;
+
+    my $timeout = self->{target};
+    $timeout =~ s/ms$//;
+    $timeout =~ s/s$/000/;
+
+    my $jsf = JavaScript::Writer::Function->new;
+    $jsf->body($cb);
+    my $func_as_string = $jsf->as_string;
+
+    self->append(
+        "setTimeout($func_as_string, $timeout)",
+        end_of_call_chain => 1
+    );
+    return self;
+}
 
 use JavaScript::Writer::Var;
+
+sub let {
+    my %vars = args;
+    my $code = "";
+    while (my ($var, $value) = each %vars) {
+        self->var($var, $value);
+    }
+    return self;
+}
 
 sub var {
     my ($self, $var, $value) = @_;
@@ -238,6 +266,11 @@ use its C<call> method to call a certain functions from your library.
 
 =over
 
+=item js()
+
+This function is exported by default to your namespace. Is the spiffy
+ultimate entry point for generating all kinds of javascripts.
+
 =item new()
 
 Object constructor. Takes nothing, gives you an javascript writer
@@ -252,7 +285,6 @@ Call an javascript function with arguments. Arguments are given in
 perl's native form, you don't need to use L<JSON> module to serialized
 it first.  (Unless, of course, that's your purpose: to get a JSON
 string in JavaScript.)
-
 
 =item var( $name, [ $value ] )
 
@@ -286,6 +318,21 @@ Or something like this;
     my $a = $js->new->myAjaxGet("/my/foo.json")->end();
     print $js->as_string;
     # var a;a = myAjaxGet("/my/foo.json");
+
+=item let( var1 => value1, var2 => value2, ... )
+
+This let you assign multiple variables at once.
+
+=item latter($timeout, sub { ... } )
+
+This is another way saying setTimeout(sub { ... }, $timeout). With
+C<js()> funciton, you can now say:
+
+    js("3s")->latter(sub { ... });
+
+And that gets turned into
+
+    setTimeout(function(){...}, 3000);
 
 =item end()
 
