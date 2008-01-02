@@ -9,10 +9,8 @@ __PACKAGE__->mk_accessors(qw[ name body ]);
 
 use overload '""' => \&as_string;
 
-
 our $VERSION = '0.0.2';
 
-use JavaScript::Writer;
 use JavaScript::Writer::Block;
 
 sub new {

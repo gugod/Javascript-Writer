@@ -11,6 +11,25 @@ use JSON::Syck;
 
 our $VERSION = '0.0.8';
 
+use Sub::Exporter -setup => {
+    exports => ['js'],
+    groups  => {
+        default =>  [ -all ],
+    }
+};
+
+require JavaScript::Writer::Base;
+
+{
+    my $base;
+
+    sub js {
+        my ($target) = @_;
+        $base = JavaScript::Writer::Base->new( target => $target ) unless defined $base;
+        return $base;
+    }
+}
+
 sub new {
     my $class = shift;
     if (ref $class) {
