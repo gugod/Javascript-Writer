@@ -11,7 +11,7 @@ use self;
 
 use JSON::Syck;
 
-our $VERSION = '0.0.8';
+our $VERSION = '0.1.0';
 
 use Sub::Exporter -setup => {
     exports => ['js'],

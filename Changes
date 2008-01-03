@@ -1,5 +1,10 @@
 Revision history for JavaScript-Writer
 
+0.1.0
+- Introduce a new wave of js writter with the spiffy "js" function.
+- Add "let" method that let you do multiple variable assignment.
+- No v-string in "use" for no warning in perl 5.10
+
 0.0.8
 - Add as_html() method
 - Let new() be an instance method too.

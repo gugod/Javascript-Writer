@@ -39,6 +39,7 @@ t/10.helper.t
 t/100.jquery.t
 t/11.closure.t
 t/12.var.t
+t/200.new_wave.t
 t/50.function.t
 t/51.control.t
 t/lib/Test/JavaScript/Writer/Var.pm
