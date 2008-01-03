@@ -6,12 +6,41 @@ use warnings;
 use JavaScript::Writer;
 use Test::More;
 
-plan tests => 5;
+plan tests => 7;
 
 {
     js("3s")->latter(
         sub {
+            js->alert(42);
+            js("1s")->latter(
+                sub {
+                    js->alert(43);
+                }
+            );
+            js->alert(44);
+        }
+    );
+
+    is js->as_string, "setTimeout(function(){alert(42);setTimeout(function(){alert(43);}, 1000);alert(44);}, 3000);";
+};
+
+{
+    js->new;
+    js("3s")->latter(
+        sub {
             $_[0]->alert(42);
+        }
+    );
+
+    is js->as_string, "setTimeout(function(){alert(42);}, 3000);"
+};
+
+{
+    js->new;
+
+    js("3s")->latter(
+        sub {
+            js->alert(42);
         }
     );
 

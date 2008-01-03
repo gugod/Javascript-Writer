@@ -23,9 +23,36 @@ use Sub::Exporter -setup => {
 my $base;
 
 sub js {
+    # Let bareword 'js' also refer to $_[0] when it's used in the callbacks.
+    my $level = 1;
+    my @c = ();
+    my $js;
+    while ( $level < 3 && (!defined($c[3]) || $c[3] eq '(eval)') ) {
+        @c = do {
+            package DB;
+            @DB::args = ();
+            caller($level);
+        };
+        $level++;
+        if (ref($DB::args[0]) eq 'JavaScript::Writer') {
+            $js = $DB::args[0] ;
+            last;
+        }
+    }
+
     my ($target) = @_;
-    $base = JavaScript::Writer->new( target => $target ) unless defined $base;
+    if (defined $js) {
+        $js->{target} = $target if defined $target;
+        return $js;
+    }
+
+    $base = JavaScript::Writer->new() unless defined $base;
+    if (defined $target) {
+        $base->{target} = $target;
+    }
+    
     return $base;
+
 }
 
 sub new {
