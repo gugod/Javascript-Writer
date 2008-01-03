@@ -9,6 +9,7 @@ build_requires
     'Test::Class' => '0';
 
 requires
+    'self'       => '0',
     'JSON::Syck' => '0',
     'Class::Accessor::Fast' => '0';
 

@@ -68,36 +68,33 @@ sub new {
     return $self;
 }
 
-
 sub call {
-    my ($self, $function, @args) = @_;
-    push @{$self->{statements}},{
-        object => $self->{object} || undef,
+    my ($function, @args) = args;
+    push @{self->{statements}},{
+        object => self->{object} || undef,
         call => $function,
         args => \@args,
         end_of_call_chain => (!defined wantarray)
     };
-    delete $self->{object};
-    return $self;
+    delete self->{object};
+    return self;
 }
 
 sub append {
-    my ($self, $code, @xs) = @_;
-    push @{$self->{statements}}, { code => $code, @xs };
-    return $self;
+    my ($code, @xs) = args;
+    push @{self->{statements}}, { code => $code, @xs };
+    return self;
 }
 
 sub end {
-    my $self = shift;
-    my $last = $self->{statements}[-1];
+    my $last = self->{statements}[-1];
     $last->{end_of_call_chain} = 1;
-    return $self;
+    return self;
 }
 
 sub object {
-    my ($self, $object) = @_;
-    $self->{object} = $object;
-    return $self;
+    self->{object} = args[0];
+    return self;
 }
 
 sub latter {
@@ -109,12 +106,8 @@ sub latter {
 
     my $jsf = JavaScript::Writer::Function->new;
     $jsf->body($cb);
-    my $func_as_string = $jsf->as_string;
 
-    self->append(
-        "setTimeout($func_as_string, $timeout)",
-        end_of_call_chain => 1
-    );
+    self->append("setTimeout($jsf, $timeout)");
     return self;
 }
 
@@ -208,10 +201,9 @@ sub function {
 }
 
 sub as_string {
-    my ($self) = @_;
     my $ret = "";
 
-    for (@{$self->{statements}}) {
+    for (@{self->{statements}}) {
         if (my $f = $_->{call}) {
             my $delimiter = $_->{delimiter} ||
                 ($_->{end_of_call_chain} ? ";" : ".");
@@ -221,7 +213,7 @@ sub as_string {
                     join(",",
                          map {
                              if (ref($_) eq 'CODE') {
-                                 $self->function($_)
+                                 self->function($_)
                              }
                              else {
                                  JSON::Syck::Dump $_
@@ -240,8 +232,7 @@ sub as_string {
 }
 
 sub as_html {
-    my $self = shift;
-    qq{<script type="text/javascript">$self</script>}
+    qq{<script type="text/javascript">${\self->as_string}</script>}
 }
 
 our $AUTOLOAD;
@@ -253,13 +244,8 @@ sub AUTOLOAD {
     return $self->call($function, @_);
 }
 
-
-sub FETCH {
-    my ($self, $obj) = @_;
-    $self->{object} = $obj;
-}
-
 1; # Magic true value required at end of module
+
 __END__
 
 =head1 NAME
@@ -270,15 +256,14 @@ JavaScript::Writer - JavaScript code generation from Perl.
 
     use JavaScript::Writer;
 
-    my $js = JavaScript::Writer->new;
+    # Call alert("Nihao").
+    js->call("alert", "Nihao");
 
-    # Call alert("Nihao")
-    $js->call("alert", "Nihao");
+    # Similar, but display Perl-localized message of "Nihao".
+    js->call("alert", _("Nihao") );
 
-    # Similar, but display Perl-localized message of "Nihao". (that might be "哈囉")
-    $js->call("alert", _("Nihao") );
-
-    # Overload
+    # Output
+    js->as_string
 
 =head1 DESCRIPTION
 
@@ -293,18 +278,37 @@ use its C<call> method to call a certain functions from your library.
 
 =over
 
-=item js()
+=item js( [ $target ] )
 
 This function is exported by default to your namespace. Is the spiffy
 ultimate entry point for generating all kinds of javascripts.
+
+C<js> represents a singleton object of all namespace. Unless used in a
+subroutine passed to construct a JavaScript function, it always refers
+to the same C<JavaScript::Writer> object.
+
+It optionally takes a C<$target> parameter that represents something
+on which you can perform some action. For example, here's the sweet
+way to do C<setTimeout>:
+
+    js("3s")->latter(sub{
+        js->say('something');
+    });
 
 =item new()
 
 Object constructor. Takes nothing, gives you an javascript writer
 object. It can be called as a class method, or an object method.
-However, calling it on objects does not imply cloning the original
-object, but just a shorthand because typing package name is always
+Calling it on objects does not imply cloning the original object, but
+just a shorthand to construct a new one. Typing package name is always
 longer.
+
+One special usage is to say:
+
+    js->new;
+
+This just flush the stored statements in the C<js> object, without
+creating a new object.
 
 =item call( $function, $arg1, $arg2, $arg3, ...)
 
@@ -361,6 +365,13 @@ And that gets turned into
 
     setTimeout(function(){...}, 3000);
 
+You can use "ms" and "s" as the time unit, they means millisecond and
+seconds respectively. Number with any units means milliseconds by
+default.
+
+More complex time representation like C<"3h5m2s">, are not implement
+yet.
+
 =item end()
 
 Assert an end of call chain. Calling this is required if you're
@@ -380,7 +391,6 @@ Give the object name for next function call. The preferred usage is:
 Which will then generated this javascript code snippet:
 
     Widget.Lightbox.show("Nihao")
-
 
 =item while( $condition => $code_ref )
 
@@ -475,7 +485,7 @@ Kang-min Liu  C<< <gugod@gugod.org> >>
 
 =head1 LICENCE AND COPYRIGHT
 
-Copyright (c) 2007, Kang-min Liu C<< <gugod@gugod.org> >>.
+Copyright (c) 2007,2008, Kang-min Liu C<< <gugod@gugod.org> >>.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
