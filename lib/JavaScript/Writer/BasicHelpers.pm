@@ -35,7 +35,13 @@ sub closure {
     $jsf->arguments(@arguments);
 
     my $argvalue = $_;
-    $self->call(";($jsf)", @values);
+    if (defined $args{this}) {
+        $self->call(";($jsf).call", $args{this}, @values);
+    }
+    else {
+        $self->call(";($jsf)", @values);
+    }
+
     return $self;
 }
 
@@ -72,7 +78,7 @@ construct like this:
 It's very useful for doing functional programming in javascript.
 
 
-=head2 closure(arguments => { name => value }, body => sub {... })
+=head2 closure(arguments => { name => value }, body => sub {... }, ...)
 
 Another form of the closure function. For example:
 
@@ -96,6 +102,23 @@ This generates something like this:
 The value to the key "parameters" is a hashref, which means the order
 of function arguments is not guarenteed. But that shouldn't matter at
 all because they are all named. They have to be named anyway.
+
+The value to the key "this" refers to te value of "this" variable in
+the closure. For example:
+
+  js->closure(
+      this => "el",
+      parameters => { msg => \ "Hello, World" }
+      body => sub {
+        js->jQuery("this")->html("msg");
+      }
+  );
+
+This generates
+
+    ;(function(msg){
+        jQuery(this).html(msg);
+    }).call(el, "Hello, World");
 
 =head1 AUTHOR and LICENSE
 

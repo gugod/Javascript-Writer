@@ -6,7 +6,7 @@ use JavaScript::Writer;
 use JavaScript::Writer::BasicHelpers;
 use Test::More;
 
-plan tests => 2;
+plan tests => 3;
 
 {
     my $js = JavaScript::Writer->new;
@@ -35,4 +35,25 @@ plan tests => 2;
     );
 
     is($js->as_string(), ";(function(obj){alert(obj);})(42);");
+}
+
+{
+    my $js = JavaScript::Writer->new;
+
+    $js->closure(
+        this => "el",
+        parameters => {
+            msg => \ "Hello, World"
+        },
+        body => sub {
+            my $js = shift;
+            $js->jQuery("this")->html("msg")
+        }
+    );
+
+    is(
+        $js->as_string(),
+        ';(function(msg){jQuery(this).html(msg);}).call(el,"Hello, World");'
+    );
+
 }
