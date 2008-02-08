@@ -22,34 +22,37 @@ use Sub::Exporter -setup => {
 
 my $base;
 
-sub js {
-    # Let bareword 'js' also refer to $_[0] when it's used in the callbacks.
-    my $level = 1;
+sub _js {
+    # Return the top-most $_[0] JavaScript::Writer object in stack.
+    my $level = 2;
     my @c = ();
     my $js;
-    while ( $level < 3 && (!defined($c[3]) || $c[3] eq '(eval)') ) {
+    while ( $level < 10 && (!defined($c[3]) || $c[3] eq '(eval)') ) {
         @c = do {
             package DB;
             @DB::args = ();
             caller($level);
         };
         $level++;
+
         if (ref($DB::args[0]) eq 'JavaScript::Writer') {
             $js = $DB::args[0] ;
             last;
         }
     }
+    return $js;
+}
+
+sub js {
+    my $js = _js();
 
     my ($target) = @_;
     if (defined $js) {
         $js->{target} = $target if defined $target;
         return $js;
     }
-
     $base = JavaScript::Writer->new() unless defined $base;
-    if (defined $target) {
-        $base->{target} = $target;
-    }
+    $base->{target} = $target if defined $target;
     return $base;
 }
 
@@ -61,6 +64,7 @@ sub new {
         }
         return __PACKAGE__->new;
     }
+
     my $self = bless { args }, self;
     $self->{statements} = [];
     return $self;
@@ -192,15 +196,14 @@ sub else {
 use JavaScript::Writer::Function;
 
 sub function {
-    my ($self, @args) = @_;
-    return JavaScript::Writer::Function->new(@args);
+    return JavaScript::Writer::Function->new(args);
 }
 
 sub obj_as_string {
     my ($obj) = args;
 
     if (ref($obj) eq 'CODE') {
-        return self->function($obj)
+        return self->function($obj);
     }
     elsif (ref($obj) =~ /^JavaScript::Writer/) {
         return $obj->as_string
@@ -209,7 +212,7 @@ sub obj_as_string {
         return $obj
     }
     elsif (ref($obj) eq "SCALAR") {
-        return JSON::Syck::Dump($$obj)
+        return JSON::Syck::Dump($obj)
     }
     elsif (ref($obj) eq 'ARRAY') {
         my @ret = map {
@@ -239,7 +242,7 @@ sub as_string {
                 "$f(" .
                     join(",",
                          map {
-                             self->obj_as_string( $_ )
+                             self->obj_as_string( $_ );
                          } @$args
                      ) . ")" . $delimiter
         }

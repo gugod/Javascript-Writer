@@ -15,13 +15,18 @@ use Sub::Exporter -setup => {
 };
 
 sub jQuery {
-    my ($selector) = @_;
-    if (!defined $selector) {
-        return js->object('jQuery')
+    my $js = JavaScript::Writer::_js;
+    my $selector = shift;
+
+    my $s = ref($selector) ? $selector : \$selector;
+
+    if (defined $js) {
+        return $js->jQuery( $s ) if defined $selector;;
+        return $js->object('jQuery');
     }
-    elsif (ref($selector) eq '') {
-        return js->call('jQuery', \ $selector);
-    }
+
+    return js->jQuery($s) if defined $selector;
+    return js->object('jQuery');
 }
 
 1;

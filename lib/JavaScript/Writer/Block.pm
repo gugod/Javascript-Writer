@@ -23,7 +23,7 @@ sub as_string {
     my $self = shift;
     my $sub = $self->body;
     my $body = sub {
-        my $js = shift;
+        my ($js) = @_;
         $sub->($js);
         return $js;
     }->(JavaScript::Writer->new);
