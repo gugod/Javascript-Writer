@@ -46,13 +46,14 @@ sub _js {
 sub js {
     my $js = _js();
 
-    my ($target) = @_;
+    my ($obj) = @_;
     if (defined $js) {
-        $js->{target} = $target if defined $target;
+        $js->{object} = $obj if defined $obj;
         return $js;
     }
+
     $base = JavaScript::Writer->new() unless defined $base;
-    $base->{target} = $target if defined $target;
+    $base->{object} = $obj if defined $obj;
     return $base;
 }
 
@@ -78,7 +79,7 @@ sub call {
         args => \@args,
         end_of_call_chain => (!defined wantarray)
     };
-    delete self->{target};
+
     return self;
 }
 
@@ -102,7 +103,7 @@ sub object {
 sub latter {
     my ($cb) = args;
 
-    my $timeout = delete self->{target};
+    my $timeout = delete self->{object};
     $timeout =~ s/ms$//;
     $timeout =~ s/s$/000/;
 
@@ -171,32 +172,19 @@ sub var {
 
 use JavaScript::Writer::Block;
 
+sub do {
+    my ($block) = args;
+    my $condition = delete self->{object};
+    my $b = JavaScript::Writer::Block->new;
+    $b->body($block);
+    self->append("if($condition)${b}", delimiter => "" );
+}
+
 sub while {
     my ($self, $condition, $block) = @_;
     my $b = JavaScript::Writer::Block->new;
     $b->body($block);
-    $self->append("while(${condition})${b}")
-}
-
-sub if {
-    my ($self, $condition, $block) = @_;
-    my $b = JavaScript::Writer::Block->new;
-    $b->body($block);
-    $self->append("if(${condition})${b}", delimiter => "\n")
-}
-
-sub elsif {
-    my ($self, $condition, $block) = @_;
-    my $b = JavaScript::Writer::Block->new;
-    $b->body($block);
-    $self->append("else if(${condition})${b}", delimiter => "\n");
-}
-
-sub else {
-    my ($self, $block) = @_;
-    my $b = JavaScript::Writer::Block->new;
-    $b->body($block);
-    $self->append("else${b}", delimiter => "\n");
+    $self->append("while(${condition})${b}", , delimiter => "" );
 }
 
 use JavaScript::Writer::Function;
@@ -240,9 +228,10 @@ sub as_string {
     my $ret = "";
 
     for (@{self->{statements}}) {
+        my $delimiter =
+            defined($_->{delimiter}) ? $_->{delimiter} : ($_->{end_of_call_chain} ? ";" : ".");
         if (my $f = $_->{call}) {
-            my $delimiter = $_->{delimiter} ||
-                ($_->{end_of_call_chain} ? ";" : ".");
+
             my $args = $_->{args};
             $ret .= ($_->{object} ? "$_->{object}." : "" ) .
                 "$f(" .
@@ -253,9 +242,8 @@ sub as_string {
                      ) . ")" . $delimiter
         }
         elsif (my $c = $_->{code}) {
-            my $delimiter = $_->{delimiter} || ";";
-            $c .= $delimiter
-                unless $c =~ /$delimiter\s*$/s;
+            $delimiter = defined $_->{delimiter}  ? $_->{delimiter} : ";";
+            $c .= $delimiter unless $c =~ /$delimiter\s*$/s;
             $ret .= $c;
         }
     }
@@ -271,12 +259,6 @@ sub AUTOLOAD {
     my $self = shift;
     my $function = $AUTOLOAD;
     $function =~ s/.*:://;
-
-    if (defined $self->{target}) {
-        if (!defined $self->{object}) {
-            $self->{object} = $self->{target}
-        }
-    }
 
     return $self->call($function, @_);
 }
@@ -315,7 +297,7 @@ use its C<call> method to call a certain functions from your library.
 
 =over
 
-=item js( [ $target ] )
+=item js( [ $object ] )
 
 This function is exported by default to your namespace. Is the spiffy
 ultimate entry point for generating all kinds of javascripts.
@@ -324,13 +306,19 @@ C<js> represents a singleton object of all namespace. Unless used in a
 subroutine passed to construct a JavaScript function, it always refers
 to the same C<JavaScript::Writer> object.
 
-It optionally takes a C<$target> parameter that represents something
+It optionally takes a C<$object> parameter that represents something
 on which you can perform some action. For example, here's the sweet
 way to do C<setTimeout>:
 
     js("3s")->latter(sub{
         js->say('something');
     });
+
+Or usually it can just be a normal object:
+
+    js("Widget.Lightbox")->show( $content );
+
+    # Widget.Lightbox.show( ... )
 
 =item new()
 
@@ -441,20 +429,21 @@ The output of 'while' statement look like this:
         $code
     }
 
-=item if ( $codnition => $code_ref )
+=item do ( $code_ref )
 
-=item elsif ( $codnition => $code_ref )
+C<do> method acts like C<if>:
 
-=item else ( $code_ref )
+    js("foo")->do(sub {
+      ....
+    });
 
-These 3 methods forms a trinity to construct the if..elsif..else form
-of control structure. Of course, in JavaScript, it it's not called
-"elsif", but "else if". But hey, we're Perl people.
+That code generate this javascript:
 
-The arguements are pretty similar to C<while> method. But these
-function use newline characters to deliminate them from others rather
-then using ";".  That's the major difference between them and all
-other methods.
+    if(foo) {
+        ....
+    }
+
+NOTICE: The old if-else-elsif methods are removed due to their stupid looking design.
 
 =item function( $code_ref )
 

@@ -6,7 +6,26 @@ use warnings;
 use JavaScript::Writer;
 use Test::More;
 
-plan tests => 9;
+plan tests => 11;
+
+{
+    js->new;
+    js("true")->do(sub {
+        js->alert(42);
+    });
+
+    is js->as_string, "if(true){alert(42);}";
+}
+
+
+{
+    js->new;
+    js->while("true", sub {
+        js->alert(42);
+    });
+
+    is js->as_string, qq{while(true){alert(42);}};
+}
 
 {
     js->new;
