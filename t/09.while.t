@@ -19,7 +19,7 @@ plan tests => 2;
 
 {
     my $js = JavaScript::Writer->new();
-    $js->while(1 => sub { $_[0]->alert("Nihao") });
+    $js->while(1 => sub { $_[0]->alert(\ "Nihao") });
 
     is $js, 'while(1){alert("Nihao");};', "a simple while loop";
 }

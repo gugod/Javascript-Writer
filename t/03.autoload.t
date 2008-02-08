@@ -7,14 +7,14 @@ use Test::More 'no_plan';
 
 {
     my $js = JavaScript::Writer->new();
-    $js->alert("foo");
+    $js->alert(\ "foo");
 
     is($js->as_string(), q{alert("foo");});
 }
 
 {
     my $js = JavaScript::Writer->new();
-    $js->alert( q{"'?\$\\} );
+    $js->alert(\ q{"'?\$\\} );
     is($js->as_string(), q{alert("\"'?\\\\$\\\\");});
 }
 

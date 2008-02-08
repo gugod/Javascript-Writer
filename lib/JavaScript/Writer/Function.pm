@@ -15,7 +15,18 @@ use JavaScript::Writer::Block;
 
 sub new {
     my $class = shift;
+
     my $self = bless {}, $class;
+    if (ref($_[0]) eq 'CODE') {
+        $self->body($_[0]);
+    }
+    else {
+        my %args = @_;
+        while ( my ($k, $v) = each %args) {
+            $self->$k($v);
+        }
+    }
+
     return $self;
 }
 

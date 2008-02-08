@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use JavaScript::Writer;
+
 use Test::More;
 
 plan tests => 4;
@@ -11,7 +12,7 @@ my $wanted = 'jQuery("#foo").bar();';
 
 {
     my $js = JavaScript::Writer->new;
-    $js->call('jQuery',"#foo")->bar();
+    $js->call('jQuery',\ "#foo")->bar();
 
     is $js->as_string(), $wanted, "Used chained calls"
 }
@@ -26,17 +27,17 @@ my $wanted = 'jQuery("#foo").bar();';
 {
     my $js = JavaScript::Writer->new;
 
-    $js->jQuery("#foo")->bar();
+    $js->jQuery(\ "#foo")->bar();
 
     is $js->as_string(), $wanted, "chained autoloaded calls"
 }
 
 {
     my $js = JavaScript::Writer->new;
-    $js->jQuery("#foo")->click(
+    $js->jQuery(\ "#foo")->click(
         sub {
             my $js = shift;
-            $js->alert("Nihao")
+            $js->alert(\ "Nihao")
         }
     );
 

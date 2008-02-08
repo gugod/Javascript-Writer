@@ -12,9 +12,29 @@ sub delay {
 }
 
 sub closure {
-    my ($self, $block) = @_;
-    my $jsf = $self->function( $block );
-    $self->append(";($jsf)();", delimiter => "\n");
+    my $self = shift;
+
+    my %args;
+    if (ref($_[0]) eq 'CODE') {
+        $args{body} = $_[0];
+    }
+    else {
+        %args = @_;
+    }
+    my $params = delete $args{parameters};
+
+    my (@arguments, @values);
+    while(my ($name, $value) = each %$params) {
+        push @arguments, $name;
+        push @values, $value;
+    }
+    my $jsf = $self->function(
+        body => $args{body},
+    );
+    $jsf->arguments(@arguments);
+
+    my $argvalue = $_;
+    $self->call(";($jsf)", @values);
     return $self;
 }
 

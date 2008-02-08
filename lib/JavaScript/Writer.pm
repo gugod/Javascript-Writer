@@ -11,7 +11,7 @@ use self;
 
 use JSON::Syck;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 use Sub::Exporter -setup => {
     exports => ['js'],
@@ -194,10 +194,8 @@ sub else {
 use JavaScript::Writer::Function;
 
 sub function {
-    my ($self, $sub) = @_;
-    my $jsf = JavaScript::Writer::Function->new;
-    $jsf->body($sub);
-    return $jsf;
+    my ($self, @args) = @_;
+    return JavaScript::Writer::Function->new(@args);
 }
 
 sub as_string {
@@ -214,6 +212,12 @@ sub as_string {
                          map {
                              if (ref($_) eq 'CODE') {
                                  self->function($_)
+                             }
+                             elsif (ref($_) =~ /^JavaScript::Writer/) {
+                                 $_->as_string
+                             }
+                             elsif (ref($_) eq "") {
+                                 $_
                              }
                              else {
                                  JSON::Syck::Dump $_

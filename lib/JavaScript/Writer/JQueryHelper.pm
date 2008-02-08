@@ -3,6 +3,16 @@ use warnings;
 
 package JavaScript::Writer::JQueryHelper;
 
+our $VERSION = v0.0.1;
+package JavaScript::Writer;
+
+sub jQuery {
+    my ($self, $arg) = @_;
+    if (ref($arg) eq '') {
+        return $self->call('jQuery', \ $arg);
+    }
+    return $self->call('jQuery', $arg);
+}
 
 1;
 

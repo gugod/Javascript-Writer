@@ -13,7 +13,7 @@ plan tests => 1;
     my $func = $js->function(
         sub {
             my $js = shift;
-            $js->alert("foo");
+            $js->alert(\"foo");
         }
     );
     is $func, q{function(){alert("foo");}}

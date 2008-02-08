@@ -26,7 +26,7 @@ plan tests => 3;
 {
     my $js = JavaScript::Writer->new;
 
-    $js->say("You")->say("Me");
+    $js->say(\ "You")->say(\ "Me");
 
     is $js->as_string(), q{say("You").say("Me");}
 }

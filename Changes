@@ -1,5 +1,29 @@
 Revision history for JavaScript-Writer
 
+0.2.0
+- [BIG CHANGE]: String literals are not serialzied into JSON anymore.
+  They'll become a bare words in the written javascript. For example:
+
+    js->alert("foo")
+
+  Now generates
+
+    alert(foo)
+
+  If you need a string literal in javascript world, pass a scalar
+  reference instead:
+
+    js->alert(\ "foo")
+
+    # alert("foo")
+
+  I realized that we need this feature a lot more then the other way.
+  This increase the danger to generate invalid javascript like:
+
+    js->alert("foo bar");  # alert(foo bar)
+
+  But that shouldn't be a big issue for developers who reads Changes.
+
 0.1.0
 - Introduce a new wave of js writter with the spiffy "js" function.
 - Add "let" method that let you do multiple variable assignment.

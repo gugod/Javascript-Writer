@@ -6,7 +6,7 @@ use JavaScript::Writer;
 use Test::More tests => 3;
 
 my $page = JavaScript::Writer->new;
-$page->call("alert", "Nihao");
+$page->call("alert", \'Nihao');
 
 
 is($page->as_string(), 'alert("Nihao");' );
