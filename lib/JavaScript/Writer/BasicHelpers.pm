@@ -3,7 +3,8 @@ use warnings;
 
 package JavaScript::Writer::BasicHelpers;
 
-our $VERSION = v0.0.1;
+our $VERSION = '0.0.2';
+
 package JavaScript::Writer;
 
 sub delay {
@@ -46,7 +47,11 @@ __END__
 
 JavaScript::Writer::BasicHelpers - Basic helper methods
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
+
+This module inject several nice helper methods into JavaScript::Writer
+namespace. It helps to make your Perl code shorter, (hopefully) less
+painful.
 
 =head1 METHODS
 
@@ -66,9 +71,35 @@ construct like this:
 
 It's very useful for doing functional programming in javascript.
 
-=head1 DESCRIPTION
 
+=head2 closure(arguments => { name => value }, body => sub {... })
 
+Another form of the closure function. For example:
+
+  js->closure(
+      parameters => {
+          el => "document.getElementById('foo')",
+          var1 => "var1",
+          var2 => \ "var 2 value"
+      },
+      body => sub {
+          ...
+      }
+  );
+
+This generates something like this:
+
+    ;(function(el, var1, var2){
+        ...
+    })(document.getElementById('foo'), var1, "var 2 value");
+
+The value to the key "parameters" is a hashref, which means the order
+of function arguments is not guarenteed. But that shouldn't matter at
+all because they are all named. They have to be named anyway.
+
+=head1 AUTHOR and LICENSE
+
+See L<JavaScript::Writer>
 
 =cut
 
