@@ -50,9 +50,7 @@ sub js {
     if (defined $target) {
         $base->{target} = $target;
     }
-    
     return $base;
-
 }
 
 sub new {
@@ -198,6 +196,37 @@ sub function {
     return JavaScript::Writer::Function->new(@args);
 }
 
+sub obj_as_string {
+    my ($obj) = args;
+
+    if (ref($obj) eq 'CODE') {
+        return self->function($obj)
+    }
+    elsif (ref($obj) =~ /^JavaScript::Writer/) {
+        return $obj->as_string
+    }
+    elsif (ref($obj) eq "") {
+        return $obj
+    }
+    elsif (ref($obj) eq "SCALAR") {
+        return JSON::Syck::Dump($$obj)
+    }
+    elsif (ref($obj) eq 'ARRAY') {
+        my @ret = map {
+            self->obj_as_string($_)
+        } @$obj;
+
+        return "[" . join(",", @ret) . "]";
+    }
+    elsif (ref($obj) eq 'HASH') {
+        my %ret;
+        while (my ($k, $v) = each %$obj) {
+            $ret{$k} = self->obj_as_string($v)
+        }
+        return "{" . join (",", map { JSON::Syck::Dump($_) . ":" . $ret{$_} } keys %ret) . "}";
+    }
+}
+
 sub as_string {
     my $ret = "";
 
@@ -210,18 +239,7 @@ sub as_string {
                 "$f(" .
                     join(",",
                          map {
-                             if (ref($_) eq 'CODE') {
-                                 self->function($_)
-                             }
-                             elsif (ref($_) =~ /^JavaScript::Writer/) {
-                                 $_->as_string
-                             }
-                             elsif (ref($_) eq "") {
-                                 $_
-                             }
-                             else {
-                                 JSON::Syck::Dump $_
-                             }
+                             self->obj_as_string( $_ )
                          } @$args
                      ) . ")" . $delimiter
         }
@@ -454,6 +472,12 @@ doing.
 =item as_string()
 
 Output your statements as a snippet of javascript code.
+
+=item obj_as_string()
+
+This is use internally as a wrapper to JSON::Syck::Dump sub-routine,
+in order to allow functions to be dumped as a part of javascript
+object.
 
 =item as_html()
 
