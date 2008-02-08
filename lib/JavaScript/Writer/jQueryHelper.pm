@@ -16,16 +16,14 @@ use Sub::Exporter -setup => {
 
 sub jQuery {
     my $js = JavaScript::Writer::_js;
-    my $selector = shift;
-
-    my $s = ref($selector) ? $selector : \$selector;
+    my $s = shift;
 
     if (defined $js) {
-        return $js->jQuery( $s ) if defined $selector;;
+        return $js->jQuery( $s ) if defined $s;
         return $js->object('jQuery');
     }
 
-    return js->jQuery($s) if defined $selector;
+    return js->jQuery($s) if defined $s;
     return js->object('jQuery');
 }
 

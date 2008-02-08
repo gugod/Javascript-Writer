@@ -1,5 +1,4 @@
-#!/usr/bin/perl
-
+#!/usr/bin/perl 
 use strict;
 use warnings;
 use JavaScript::Writer;
@@ -26,11 +25,11 @@ plan tests => 3;
 
     $js->closure(
         parameters => {
-            obj => 42
+            obj => \ 42
         },
         body => sub {
             my $js = shift;
-            $js->alert("obj");
+            $js->alert( \ "obj" );
         }
     );
 
@@ -41,13 +40,13 @@ plan tests => 3;
     my $js = JavaScript::Writer->new;
 
     $js->closure(
-        this => "el",
+        this => \ "el",
         parameters => {
-            msg => \ "Hello, World"
+            msg => "Hello, World"
         },
         body => sub {
             my $js = shift;
-            $js->jQuery("this")->html("msg")
+            $js->jQuery(\ "this")->html(\ "msg")
         }
     );
 

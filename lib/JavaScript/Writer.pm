@@ -145,18 +145,24 @@ sub var {
     }
     elsif (ref($value) eq 'SCALAR') {
         if (defined $$value) {
-            $s = "var $var = " . JSON::Syck::Dump($$value) . ";";
+            my $v = $self->obj_as_string($value);
+
+            $s = "var $var = $v;";
         }
         else {
             $s = "var $var;";
         }
-        JavaScript::Writer::Var->new(
-            $value,
-            {
-                name => $var,
-                jsw  => $self
-            }
-        );
+
+        eval '
+            JavaScript::Writer::Var->new(
+                $value,
+                {
+                    name => $var,
+                    jsw  => $self
+                }
+            );
+        ';
+
     }
 
     $self->append($s);
@@ -208,11 +214,8 @@ sub obj_as_string {
     elsif (ref($obj) =~ /^JavaScript::Writer/) {
         return $obj->as_string
     }
-    elsif (ref($obj) eq "") {
-        return $obj
-    }
     elsif (ref($obj) eq "SCALAR") {
-        return JSON::Syck::Dump($obj)
+        return $$obj
     }
     elsif (ref($obj) eq 'ARRAY') {
         my @ret = map {
@@ -227,6 +230,9 @@ sub obj_as_string {
             $ret{$k} = self->obj_as_string($v)
         }
         return "{" . join (",", map { JSON::Syck::Dump($_) . ":" . $ret{$_} } keys %ret) . "}";
+    }
+    else {
+        return JSON::Syck::Dump($obj)
     }
 }
 

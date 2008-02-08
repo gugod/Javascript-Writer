@@ -14,13 +14,13 @@ is
     '{"foo":function(){alert(42);}}';
 
 is
-    js->obj_as_string([\ "foo", sub { js->alert(42); }]),
+    js->obj_as_string(["foo", sub { js->alert(42); }]),
     '["foo",function(){alert(42);}]';
 
-is js->obj_as_string([\ "foo"]), '["foo"]';
+is js->obj_as_string(["foo"]), '["foo"]';
 
-is js->obj_as_string("foo"), "foo";
+is js->obj_as_string(\ "foo"), "foo";
 
-is js->obj_as_string(\ "foo"), '"foo"';
+is js->obj_as_string("foo"), '"foo"';
 
 

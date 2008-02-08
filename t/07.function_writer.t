@@ -10,7 +10,7 @@ use Test::More tests => 5;
 
     $jsf->body(sub {
                    my $js = shift;
-                   $js->alert(\ "Foo");
+                   $js->alert("Foo");
                }
            );
     is $jsf->as_string, qq{function(){alert("Foo");}};
@@ -22,7 +22,7 @@ use Test::More tests => 5;
 
     $jsf->body(sub {
                    my $js = shift;
-                   $js->alert(\ "Foo");
+                   $js->alert("Foo");
                    print "123\n";
                }
            );
@@ -34,7 +34,7 @@ use Test::More tests => 5;
 
     $jsf->body(sub {
                    my $js = shift;
-                   $js->alert(\ "Foo");
+                   $js->alert("Foo");
                    $js->return(1);
                }
            );
@@ -49,7 +49,7 @@ use Test::More tests => 5;
     $jsf->body(
         sub {
             my $js = shift;
-            $js->alert(\ "Foo");
+            $js->alert("Foo");
             $js->return(1);
         }
     );
@@ -65,7 +65,7 @@ use Test::More tests => 5;
     $jsf->body(
         sub {
             my $js = shift;
-            $js->alert(\ "Foo");
+            $js->alert("Foo");
             $js->return(1);
         }
     );

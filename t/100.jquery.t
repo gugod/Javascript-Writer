@@ -14,7 +14,7 @@ plan tests => 9;
     my $node_id = "jsw-node-1";
     jQuery("#${node_id}")->click(
         sub {
-            jQuery("#area")->html(\ "<p>Loading... </p>");
+            jQuery("#area")->html("<p>Loading... </p>");
         }
     );
 
@@ -29,12 +29,10 @@ plan tests => 9;
     my $node_id = "jsw-node-1";
     jQuery("#${node_id}")->click(
         sub {
-            jQuery("#area")->html(\ "<p>Loading... </p>");
+            jQuery("#area")->html("<p>Loading... </p>");
             js("1s")->latter(
                 sub {
-                    jQuery("#area")->load(
-                        \ "jt/hello.html"
-                    );
+                    jQuery("#area")->load("jt/hello.html");
                 });
         }
     );
@@ -50,7 +48,7 @@ my $wanted = 'jQuery("#foo").bar();';
 
 {
     my $js = JavaScript::Writer->new;
-    $js->call('jQuery',\ "#foo")->bar();
+    $js->call('jQuery',"#foo")->bar();
 
     is $js->as_string(), $wanted, "Used chained calls"
 }
@@ -65,17 +63,17 @@ my $wanted = 'jQuery("#foo").bar();';
 {
     my $js = JavaScript::Writer->new;
 
-    $js->jQuery(\ "#foo")->bar();
+    $js->jQuery("#foo")->bar();
 
     is $js->as_string(), $wanted, "chained autoloaded calls"
 }
 
 {
     my $js = JavaScript::Writer->new;
-    $js->jQuery(\ "#foo")->click(
+    $js->jQuery("#foo")->click(
         sub {
             my $js = shift;
-            $js->alert(\ "Nihao")
+            $js->alert("Nihao")
         }
     );
 
@@ -91,7 +89,7 @@ my $wanted = 'jQuery("#foo").bar();';
 
     jQuery('#foo')->click(
         sub {
-            js->alert(\ "Nihao");
+            js->alert("Nihao");
         }
     );
 
@@ -106,9 +104,9 @@ my $wanted = 'jQuery("#foo").bar();';
     js->new;
 
     jQuery->get(
-        \ "foo.json",
+        "foo.json",
         sub {
-            js->alert(\ "Nihao");
+            js->alert("Nihao");
         }
     );
 
@@ -125,7 +123,7 @@ my $wanted = 'jQuery("#foo").bar();';
     js->new;
 
     my $cb = js->function(sub {
-                              js->alert(\ "Nihao");
+                              js->alert("Nihao");
                           });
 
     jQuery->ajax({
@@ -137,7 +135,7 @@ my $wanted = 'jQuery("#foo").bar();';
 
     is(
         js->as_string,
-        'jQuery.ajax({"success":function(){alert("Nihao");},"url":foo.json});alert(42);',
+        'jQuery.ajax({"success":function(){alert("Nihao");},"url":"foo.json"});alert(42);',
         "with jQuery from jQueryHelper"
     )
 }

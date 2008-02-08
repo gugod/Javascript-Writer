@@ -44,7 +44,7 @@ plan tests => 6;
 {
     # var a = function(){ ... }
     my $js = JavaScript::Writer->new();
-    $js->var(salut => sub { $_[0]->alert(\ "Nihao") });
+    $js->var(salut => sub { $_[0]->alert("Nihao") });
     is $js, 'var salut = function(){alert("Nihao");};', "function assigned to a var";
 }
 
@@ -52,7 +52,7 @@ plan tests => 6;
     # var a = function(foo,bar,baz){ ... }
     my $jsf = JavaScript::Writer::Function->new;
     $jsf->arguments(qw[foo bar baz]);
-    $jsf->body( sub { $_[0]->alert(\ "Nihao") } );
+    $jsf->body( sub { $_[0]->alert("Nihao") } );
 
     my $js = JavaScript::Writer->new();
     $js->var(salut => $jsf);

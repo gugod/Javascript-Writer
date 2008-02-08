@@ -61,7 +61,7 @@ sub test_var_assigned_a_function : Test(1) {
 
     my $a;
     $js->var(a => \$a);
-    $a = $js->new->somefunc(\ "/foo/bar")->end;
+    $a = $js->new->somefunc("/foo/bar")->end;
 
     is $js, 'var a;a = somefunc("/foo/bar");';
 }
