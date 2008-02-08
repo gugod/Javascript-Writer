@@ -6,9 +6,16 @@ use warnings;
 use JavaScript::Writer;
 use Test::More;
 
-plan tests => 8;
+plan tests => 9;
 
 {
+    js->new;
+    js("Widget.Lightbox")->show("Nihao");
+    is js->as_string, qq{Widget.Lightbox.show("Nihao");};
+}
+
+{
+    js->new;
     js("3s")->latter(
         sub {
             js->alert(42);

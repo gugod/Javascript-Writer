@@ -73,12 +73,12 @@ sub new {
 sub call {
     my ($function, @args) = args;
     push @{self->{statements}},{
-        object => self->{object} || undef,
+        object => delete self->{object} || undef,
         call => $function,
         args => \@args,
         end_of_call_chain => (!defined wantarray)
     };
-    delete self->{object};
+    delete self->{target};
     return self;
 }
 
@@ -102,7 +102,7 @@ sub object {
 sub latter {
     my ($cb) = args;
 
-    my $timeout = self->{target};
+    my $timeout = delete self->{target};
     $timeout =~ s/ms$//;
     $timeout =~ s/s$/000/;
 
@@ -271,6 +271,12 @@ sub AUTOLOAD {
     my $self = shift;
     my $function = $AUTOLOAD;
     $function =~ s/.*:://;
+
+    if (defined $self->{target}) {
+        if (!defined $self->{object}) {
+            $self->{object} = $self->{target}
+        }
+    }
 
     return $self->call($function, @_);
 }
