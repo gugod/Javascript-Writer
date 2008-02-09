@@ -3,11 +3,15 @@ package JavaScript::Writer;
 use warnings;
 use strict;
 use 5.008;
-use overload
-    '<<' => \&append,
-    '""' => \&as_string;
-
 use self;
+
+use overload
+    '<<' => sub {
+        no warnings;
+        push @{ self->{statements} }, { code => args };
+        return self;
+    },
+    '""' => \&as_string;
 
 use JSON::Syck;
 
@@ -83,10 +87,23 @@ sub call {
     return self;
 }
 
+sub __in_jsw_packages__ {
+    my $level = 0;
+    my @c = caller(++$level);
+    while ( @c > 0 ) {
+        return 1 if defined $c[0] && index($c[0], __PACKAGE__) == 0;
+        @c = caller(++$level);
+    }
+    return 0;
+}
+
 sub append {
-    my ($code, @xs) = args;
-    push @{self->{statements}}, { code => $code, @xs };
-    return self;
+    if ( __in_jsw_packages__ ) {
+        push @{ self->{statements} }, { code => args };
+        return self;
+    }
+
+    return self->call("append", args);
 }
 
 sub end {
@@ -546,12 +563,6 @@ This generates
 Generate a piece of code that delays the execution of &block for $n
 seconds.
 
-=item append( $statement )
-
-Manually append a statement. With this function, you need to properly
-serialize everything to JSON. Make sure you now that what you're
-doing.
-
 =item as_string()
 
 Output your statements as a snippet of javascript code.
@@ -565,6 +576,18 @@ object.
 =item as_html()
 
 Output your javascript statements as a snippet with a <script> tag.
+
+=item append( $statement )
+
+[NOTICE]: This function behaves differently depends when it's called
+outside JavaScript::Writer.
+
+Internally it manually append a statement string. Caller needs to
+properly serialize everything to JSON, and make sure that $statement
+has no syntax error.
+
+If it's called from outside of JavaScript::Writer packages, it'll
+render a function call to "append" function.
 
 =back
 

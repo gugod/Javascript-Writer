@@ -9,6 +9,10 @@ Revision history for JavaScript-Writer
 
     alert(foo)
 
+- append() method now distinguished whether it's been called from
+  inside JavaScript::Writer or not. This avoids function
+  name conflictions. Specifically for jQuery(e).append().
+
 0.1.0
 - Introduce a new wave of js writter with the spiffy "js" function.
 - Add "let" method that let you do multiple variable assignment.
