@@ -250,17 +250,37 @@ sub as_string {
     return $ret;
 }
 
-sub as_html {
-    qq{<script type="text/javascript">${\self->as_string}</script>}
+require JavaScript::Writer::BasicHelpers;
+
+{
+    my $sn = 0;
+    sub as_html {
+        my ($self, %param) = @_;
+        $sn++;
+
+        my $id = "javascript-writer-$$-$sn";
+
+        if ($param{closure}) {
+            my $j = JavaScript::Writer->new;
+            my $self_code = $self->as_string;
+            $j->closure(
+                this => \ "document.getElementById('$id')",
+                body => sub {
+                    js->append( $self_code );
+                }
+            );
+            return qq{<script id="$id" type="text/javascript">$j</script>}
+        }
+        return qq{<script type="text/javascript">$self</script>};
+    }
 }
 
 our $AUTOLOAD;
 sub AUTOLOAD {
-    my $self = shift;
     my $function = $AUTOLOAD;
     $function =~ s/.*:://;
 
-    return $self->call($function, @_);
+    return self->call($function, args);
 }
 
 1; # Magic true value required at end of module
@@ -466,6 +486,65 @@ The returned $f is a L<JavaScript::Writer::Function> object that
 stringify to this string:
 
     function(){alert("Nihao")}
+
+=head2 closure(&block)
+
+Generate a closure with body &block. This means to generate a
+construct like this:
+
+    ;(function(){
+        // ...
+    })();
+
+It's very useful for doing functional programming in javascript.
+
+
+=head2 closure(arguments => { name => value }, body => sub {... }, ...)
+
+Another form of the closure function. For example:
+
+  js->closure(
+      parameters => {
+          el => "document.getElementById('foo')",
+          var1 => "var1",
+          var2 => \ "var 2 value"
+      },
+      body => sub {
+          ...
+      }
+  );
+
+This generates something like this:
+
+    ;(function(el, var1, var2){
+        ...
+    })(document.getElementById('foo'), var1, "var 2 value");
+
+The value to the key "parameters" is a hashref, which means the order
+of function arguments is not guarenteed. But that shouldn't matter at
+all because they are all named. They have to be named anyway.
+
+The value to the key "this" refers to te value of "this" variable in
+the closure. For example:
+
+  js->closure(
+      this => "el",
+      parameters => { msg => \ "Hello, World" }
+      body => sub {
+        js->jQuery("this")->html("msg");
+      }
+  );
+
+This generates
+
+    ;(function(msg){
+        jQuery(this).html(msg);
+    }).call(el, "Hello, World");
+
+=head2 delay($n, &block)
+
+Generate a piece of code that delays the execution of &block for $n
+seconds.
 
 =item append( $statement )
 

@@ -5,7 +5,19 @@ use JavaScript::Writer;
 use JavaScript::Writer::BasicHelpers;
 use Test::More;
 
-plan tests => 3;
+plan tests => 4;
+
+
+{
+    js->new;
+    js->alert(42);
+    js->setTimeout(sub { js->alert("Hi"); }, 42);
+
+    my $code = js->as_string;
+    my $html = js->as_html(closure => 1);
+
+    like($html, qr{<script id="(javascript-writer-\d+-\d+)" type="text/javascript">;\(function\(\){\Q$code\E}\).call\(document.getElementById\('\1'\)\);</script>}s);
+}
 
 {
     my $js = JavaScript::Writer->new;
@@ -56,3 +68,4 @@ plan tests => 3;
     );
 
 }
+
