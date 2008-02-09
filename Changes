@@ -13,6 +13,9 @@ Revision history for JavaScript-Writer
   inside JavaScript::Writer or not. This avoids function
   name conflictions. Specifically for jQuery(e).append().
 
+- end() method that asserts the end of call chain is removed.
+  This is a burden rather then a helper.
+
 0.1.0
 - Introduce a new wave of js writter with the spiffy "js" function.
 - Add "let" method that let you do multiple variable assignment.

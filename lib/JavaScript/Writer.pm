@@ -2,6 +2,7 @@ package JavaScript::Writer;
 
 use warnings;
 use strict;
+
 use 5.008;
 use self;
 
@@ -77,13 +78,13 @@ sub new {
 
 sub call {
     my ($function, @args) = args;
+    my $eoc = !defined wantarray;
     push @{self->{statements}},{
         object => delete self->{object} || undef,
         call => $function,
         args => \@args,
-        end_of_call_chain => (!defined wantarray)
+        end_of_call_chain => $eoc
     };
-
     return self;
 }
 
@@ -104,12 +105,6 @@ sub append {
     }
 
     return self->call("append", args);
-}
-
-sub end {
-    my $last = self->{statements}[-1];
-    $last->{end_of_call_chain} = 1;
-    return self;
 }
 
 sub object {
@@ -159,7 +154,9 @@ sub var {
         $s = "var $var = " . $value->as_string();
     }
     elsif (ref($value) eq 'REF') {
-        $s = $self->new->var($var => $$value)->end->as_string;
+        my $j = $self->new;
+        $j->var($var => $$value);
+        $s = $j->as_string;
     }
     elsif (ref($value) eq 'SCALAR') {
         if (defined $$value) {
@@ -408,7 +405,7 @@ Or something like this;
     my $a;
     $js->var(ans => \$a);
 
-    my $a = $js->new->myAjaxGet("/my/foo.json")->end();
+    my $a = $js->new->myAjaxGet("/my/foo.json");
     print $js->as_string;
     # var a;a = myAjaxGet("/my/foo.json");
 
@@ -433,16 +430,6 @@ default.
 
 More complex time representation like C<"3h5m2s">, are not implement
 yet.
-
-=item end()
-
-Assert an end of call chain. Calling this is required if you're
-calling $js methods at the right side of an assignment. Like:
-
-    my $a = $js->new->somefunc("foobar")->end();
-
-Please also refer to the example code in the description of C<var>
-method.
 
 =item object( $object )
 

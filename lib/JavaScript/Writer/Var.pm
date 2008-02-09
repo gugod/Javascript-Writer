@@ -35,7 +35,7 @@ sub STORE {
         $v = JSON::Syck::Dump( self->{value} );
     }
 
-    $v =~ s/;?$/;/;
+    $v =~ s/\.?;?$/;/;
     my $s = self->{name} . " = $v" ;
     self->{jsw}->append($s);
 }
