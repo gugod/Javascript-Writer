@@ -168,7 +168,7 @@ sub var {
             $s = "var $var;";
         }
 
-        eval '
+        eval {
             JavaScript::Writer::Var->new(
                 $value,
                 {
@@ -176,7 +176,7 @@ sub var {
                     jsw  => $self
                 }
             );
-        ';
+        };
 
     }
 
@@ -491,7 +491,7 @@ stringify to this string:
 
     function(){alert("Nihao")}
 
-=head2 closure(&block)
+=item closure(&block)
 
 Generate a closure with body &block. This means to generate a
 construct like this:
@@ -502,8 +502,7 @@ construct like this:
 
 It's very useful for doing functional programming in javascript.
 
-
-=head2 closure(arguments => { name => value }, body => sub {... }, ...)
+=item closure(arguments => { name => value }, body => sub {... }, ...)
 
 Another form of the closure function. For example:
 
@@ -545,7 +544,7 @@ This generates
         jQuery(this).html(msg);
     }).call(el, "Hello, World");
 
-=head2 delay($n, &block)
+=item delay($n, &block)
 
 Generate a piece of code that delays the execution of &block for $n
 seconds.

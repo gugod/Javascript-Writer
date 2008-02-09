@@ -43,11 +43,17 @@ JavaScript::Writer::jQueryHelper - A "jQuery" helper method for writing jQuery c
     # This is Perl code
     jQuery("#area')->load("/data/foo.html");
 
-=head1 DESCRIPTION
+=head1 METHOD
 
-This helper package provide only one method named 'jQuery' that acts
-pretty much like jQuery in javascript. It constructs a
-C<JavaScript::Writer> object like the way C<js> does.
+=over
+
+=item jQuery(...)
+
+The only method exported by this helper module, acts pretty much like
+jQuery in javascript. It constructs a C<JavaScript::Writer> object
+like the way C<js> does.
+
+=back
 
 =head1 AUTHOR and LICENSE
 

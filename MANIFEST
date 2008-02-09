@@ -17,7 +17,7 @@ lib/JavaScript/Writer.pm
 lib/JavaScript/Writer/BasicHelpers.pm
 lib/JavaScript/Writer/Block.pm
 lib/JavaScript/Writer/Function.pm
-lib/JavaScript/Writer/JQueryHelper.pm
+lib/JavaScript/Writer/jQueryHelper.pm
 lib/JavaScript/Writer/Var.pm
 lib6/JavaScript/Writer.pm
 Makefile.PL
@@ -39,6 +39,7 @@ t/10.helper.t
 t/100.jquery.t
 t/11.closure.t
 t/12.var.t
+t/13.obj_as_string.t
 t/200.new_wave.t
 t/50.function.t
 t/51.control.t
