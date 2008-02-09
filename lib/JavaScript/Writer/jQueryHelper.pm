@@ -33,15 +33,25 @@ __END__
 
 =head1 NAME
 
-JavaScript::Writer::JQueryHelper - Helper methods powered by jQuery.
+JavaScript::Writer::jQueryHelper - A "jQuery" helper method for writing jQuery code.
 
 =head1 SYNOPSIS
 
-=head1 METHODS
+    use JavaScript::Writer;
+    use JavaScript::Writer::jQueryHelper;
+
+    # This is Perl code
+    jQuery("#area')->load("/data/foo.html");
 
 =head1 DESCRIPTION
 
+This helper package provide only one method named 'jQuery' that acts
+pretty much like jQuery in javascript. It constructs a
+C<JavaScript::Writer> object like the way C<js> does.
 
+=head1 AUTHOR and LICENSE
+
+See L<JavaScript::Writer>
 
 =cut
 

@@ -2,7 +2,7 @@ package JavaScript::Writer::Var;
 use strict;
 use warnings;
 
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 
 use self;
 use JSON::Syck;
