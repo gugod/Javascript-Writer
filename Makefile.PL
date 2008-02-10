@@ -5,6 +5,7 @@ use inc::Module::Install;
 all_from 'lib/JavaScript/Writer.pm';
 
 build_requires
+    'JE' => '0.021',
     'Test::More' => '0.42',
     'Test::Class' => '0';
 
