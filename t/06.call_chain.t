@@ -2,8 +2,11 @@
 
 use strict;
 use warnings;
+use lib 't/lib';
+
 use JavaScript::Writer;
 use Test::More;
+use Test::JE;
 
 plan tests => 3;
 
@@ -12,7 +15,7 @@ plan tests => 3;
 
     $js->call("foo")->call("bar");
 
-    is $js->as_string(), q{foo().bar();}
+    is $js->as_string(), q{foo().bar();};
 }
 
 {
@@ -20,7 +23,7 @@ plan tests => 3;
 
     $js->foo->bar;
 
-    is $js->as_string(), q{foo().bar();}
+    is $js->as_string(), q{foo().bar();};
 }
 
 {
@@ -28,5 +31,5 @@ plan tests => 3;
 
     $js->say("You")->say("Me");
 
-    is $js->as_string(), q{say("You").say("Me");}
+    is $js->as_string(), q{say("You").say("Me");};
 }

@@ -145,7 +145,7 @@ sub var {
         $s = "var $var;";
     }
     elsif (ref($value) eq 'ARRAY' || ref($value) eq 'HASH' || !ref($value) ) {
-        $s = "var $var = " . JSON::Syck::Dump($value) . ";"
+        $s = "var $var = " . $self->obj_as_string($value) . ";"
     }
     elsif (ref($value) eq 'CODE') {
         $s = "var $var = " . $self->function($value);
@@ -231,7 +231,7 @@ sub obj_as_string {
         while (my ($k, $v) = each %$obj) {
             $ret{$k} = self->obj_as_string($v)
         }
-        return "{" . join (",", map { JSON::Syck::Dump($_) . ":" . $ret{$_} } keys %ret) . "}";
+        return "{" . join (",", map { JSON::Syck::Dump($_) . ":" . $ret{$_} } sort keys %ret) . "}";
     }
     else {
         return JSON::Syck::Dump($obj)

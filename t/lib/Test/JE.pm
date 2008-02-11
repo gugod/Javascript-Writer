@@ -14,9 +14,14 @@ sub new {
     return bless $self, $class;
 }
 
+sub eval {
+    self->{je}->eval(args);
+}
+
 sub eval_ok {
     my ($str) = args;
     self->{je}->eval($str);
+    if ($@) { diag($@) }
     ok( !$@ );
 }
 

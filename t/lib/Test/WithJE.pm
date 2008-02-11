@@ -31,7 +31,7 @@ sub test_function_call : Test(2) {
 
     self->{je}->new_function(
         dummy => sub {
-            is_deeply(\@_, [qw(Lorem Ipsum), "dummy function is called."]);
+            is_deeply(\@_, [qw(Lorem Ipsum)], "dummy function is called.");
         }
     );
 
