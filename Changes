@@ -1,10 +1,11 @@
 Revision history for JavaScript-Writer
 
-0.2.1
-- Introduce JE.pm in test ing to verify the generated javascript code are 
+0.3.0
+- Introduce JE.pm in testing to verify the generated javascript code are 
   correct in syntax.
 - var() method now can turn a CODEref inside an array or hash into function().
 - When writting a hash with var() method, the output of keys are sorted.
+- Require self 0.32.
 
 0.2.0
 - Scalar references now generates barewords in jsvascripts:

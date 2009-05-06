@@ -14,5 +14,10 @@ requires
     'JSON::Syck' => '0',
     'Class::Accessor::Fast' => '0';
 
+repository 'http://github.com/gugod/javascript-writer';
+
+tests 't/*.t';
+author_tests 'xt';
+
 WriteAll;
 
