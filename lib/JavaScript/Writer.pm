@@ -16,7 +16,7 @@ use overload
 
 use JSON::Syck;
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 use Sub::Exporter -setup => {
     exports => ['js'],
@@ -71,18 +71,18 @@ sub new {
         return __PACKAGE__->new;
     }
 
-    my $self = bless { args }, self;
+    $self = bless { args }, $self;
     $self->{statements} = [];
     return $self;
 }
 
 sub call {
-    my ($function, @args) = args;
+    my ($function, @function_args) = @args;
     my $eoc = !defined wantarray;
     push @{self->{statements}},{
         object => delete self->{object} || undef,
         call => $function,
-        args => \@args,
+        args => \@function_args,
         end_of_call_chain => $eoc
     };
     return self;
@@ -138,7 +138,7 @@ sub let {
 }
 
 sub var {
-    my ($self, $var, $value) = @_;
+    my ($var, $value) = @args;
     my $s = "";
 
     if (!defined $value) {
@@ -195,7 +195,7 @@ sub do {
 }
 
 sub while {
-    my ($self, $condition, $block) = @_;
+    my ($condition, $block) = @args;
     my $b = JavaScript::Writer::Block->new;
     $b->body($block);
     $self->append("while(${condition})${b}", , delimiter => "" );
@@ -208,7 +208,7 @@ sub function {
 }
 
 sub obj_as_string {
-    my ($obj) = args;
+    my ($obj) = @args;
 
     if (ref($obj) eq 'CODE') {
         return self->function($obj);
@@ -269,7 +269,7 @@ require JavaScript::Writer::BasicHelpers;
 {
     my $sn = 0;
     sub as_html {
-        my ($self, %param) = @_;
+        my (%param) = @args;
         $sn++;
 
         my $id = "javascript-writer-$$-$sn";

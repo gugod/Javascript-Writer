@@ -10,12 +10,11 @@ use self;
 sub setup : Test(setup) {
     js->new;
 
-    self->{js} = js;
-    self->{je} = new JE;
-    self->{stash} = {};
+    $self->{js} = js;
+    $self->{je} = new JE;
+    $self->{stash} = {};
 
-    my $self = self;
-    self->{je}->new_function(
+    $self->{je}->new_function(
         alert => sub {
             pass("alert(@_);");
         }
@@ -29,13 +28,13 @@ sub test_function_call : Test(2) {
 
     my $str = js->as_string;
 
-    self->{je}->new_function(
+    $self->{je}->new_function(
         dummy => sub {
             is_deeply(\@_, [qw(Lorem Ipsum)], "dummy function is called.");
         }
     );
 
-    self->{je}->eval($str);
+    $self->{je}->eval($str);
 }
 
 1;

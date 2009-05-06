@@ -6,21 +6,20 @@ use Test::More;
 use self;
 
 sub new {
-    my $class = shift;
-    my $self = {};
+    $self = bless {}, $self;
     $self->{je} = JE->new;
     $self->{je}->new_function(alert => sub{});
     $self->{je}->new_function(confirm => sub{});
-    return bless $self, $class;
+    return $self;
 }
 
 sub eval {
-    self->{je}->eval(args);
+    $self->{je}->eval(args);
 }
 
 sub eval_ok {
-    my ($str) = args;
-    self->{je}->eval($str);
+    my ($str) = @args;
+    $self->{je}->eval($str);
     if ($@) { diag($@) }
     ok( !$@ );
 }
