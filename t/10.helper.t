@@ -19,5 +19,5 @@ plan tests => 1;
     my $j2 = JavaScript::Writer->new;
     $j2->setTimeout($func, 20);
 
-    is($j2, $js, 'delay()');
+    is("$j2", "$js", 'delay()');
 }

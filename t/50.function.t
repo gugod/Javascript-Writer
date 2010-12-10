@@ -16,5 +16,5 @@ plan tests => 1;
             $js->alert("foo");
         }
     );
-    is $func, q{function(){alert("foo");}}
+    is "$func", q{function(){alert("foo");}}
 }

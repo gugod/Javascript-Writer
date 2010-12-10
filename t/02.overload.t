@@ -16,5 +16,5 @@ plan tests => 1;
 
     $js << q{alert('foo')};
 
-    is($js, q{alert('foo');});
+    is("$js", q{alert('foo');});
 }

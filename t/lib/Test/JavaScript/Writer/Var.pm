@@ -17,7 +17,7 @@ sub test_var_decl : Test(1) {
 
     $js->var('a');
 
-    is $js, 'var a;', "var declaration";
+    is "$js", 'var a;', "var declaration";
 }
 
 sub test_var_declinit : Test(1) {
@@ -25,7 +25,7 @@ sub test_var_declinit : Test(1) {
 
     $js->var(a => 1);
 
-    is $js, 'var a = 1;', "var declaration with initialization";
+    is "$js", 'var a = 1;', "var declaration with initialization";
 }
 
 sub test_var_declinittie : Test(1) {
@@ -33,7 +33,7 @@ sub test_var_declinittie : Test(1) {
 
     my $a = 1;
     $js->var(a => \$a);
-    is $js, 'var a = 1;', "var declaration with initialization, tie version";
+    is "$js", 'var a = 1;', "var declaration with initialization, tie version";
 }
 
 sub test_var_assignment : Test(1) {
@@ -43,7 +43,7 @@ sub test_var_assignment : Test(1) {
     $js->var(a => \$a);
     $a = 1;
 
-    is $js, "var a;a = 1;", "variable assignment in perl can be written as javascript.";
+    is "$js", "var a;a = 1;", "variable assignment in perl can be written as javascript.";
 }
 
 sub test_var_assignment_after_declinit : Test(1) {
@@ -53,7 +53,7 @@ sub test_var_assignment_after_declinit : Test(1) {
     $js->var(a => \$a);
     $a = 42;
 
-    is $js, "var a = 1;a = 42;", "variable assignment in perl can be written as javascript.";
+    is "$js", "var a = 1;a = 42;", "variable assignment in perl can be written as javascript.";
 }
 
 sub test_var_assigned_a_function : Test(1) {
@@ -63,7 +63,7 @@ sub test_var_assigned_a_function : Test(1) {
     $js->var(a => \$a);
     $a = $js->new->somefunc("/foo/bar");
 
-    is $js, 'var a;a = somefunc("/foo/bar");';
+    is "$js", 'var a;a = somefunc("/foo/bar");';
 }
 
 sub test_var_initiallzed_a_funcion : Test(1) {
@@ -76,7 +76,7 @@ sub test_var_initiallzed_a_funcion : Test(1) {
     );
     $js->var(a => \$a);
 
-    is $js, 'var a = function(){foobar();};', "another way to assign a function to a variable.";
+    is "$js", 'var a = function(){foobar();};', "another way to assign a function to a variable.";
 }
 
 sub test_var_operation : Test(1) {
